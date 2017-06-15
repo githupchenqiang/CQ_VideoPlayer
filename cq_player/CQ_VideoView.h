@@ -15,6 +15,8 @@
 @property (nonatomic ,strong)AVPlayerLayer          *PlayerLayer;
 @property (nonatomic ,strong)id                     timeObser;
 @property (nonatomic ,assign) float                 videoLength;
+
+- (instancetype)initWithFrame:(CGRect)frame Url:(NSString *)UrlString Title:(NSString *)Title;
 @end
 
 @interface CQ_VideoView (gesture)

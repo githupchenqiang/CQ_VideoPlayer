@@ -8,6 +8,7 @@
 
 #import "CQ_VideoView.h"
 #import <MediaPlayer/MPVolumeView.h>
+#import "cq_VideoStatues.h"
 
 typedef enum  {
     ChangeNone,
@@ -16,7 +17,7 @@ typedef enum  {
     ChangeCMTime
 }Change;
 
-@interface CQ_VideoView ()
+@interface CQ_VideoView ()<cq_videoStatuesDelegate>
 
 /** 判断是否结束本次平移*/
 @property (nonatomic,assign)BOOL                            isFinished;
@@ -26,6 +27,14 @@ typedef enum  {
 @property (nonatomic ,assign)CGPoint                        lastPoint;
 @property (nonatomic ,strong)MPVolumeView                   *volumeView;
 @property (nonatomic ,strong)UISlider                       *volumeSlider;
+@property (nonatomic ,strong)UISlider                       *videoSlider;
+@property (nonatomic ,assign)BOOL                           isStop;
+@property (nonatomic ,strong)UIActivityIndicatorView                     *activity;
+@property (nonatomic ,strong)UIButton                       *statuebutton;
+@property (nonatomic ,strong)NSString                       *desTitle;
+@property (nonatomic ,strong)NSString                       *natureUrl;
+
+
 
 
 
@@ -35,44 +44,110 @@ typedef enum  {
 
 @implementation CQ_VideoView
 
-- (instancetype)initWithFrame:(CGRect)frame
+- (instancetype)initWithFrame:(CGRect)frame Url:(NSString *)UrlString Title:(NSString *)Title
 {
     self = [super initWithFrame:frame];
     if (self) {
         self.backgroundColor = [UIColor orangeColor];
+        _desTitle = Title;
+        _natureUrl = UrlString;
         [self setPlayer];
+        [self addTopView];
+       
     }
     return self;
 }
 
+
+- (void)addTopView
+{
+    cq_VideoStatues *statues = [[cq_VideoStatues alloc]initWithFrame:CGRectZero];
+    statues.delegate = self;
+    _statuebutton = statues.StarButton;
+    statues.Titlelabel.text = _desTitle;
+    statues.backgroundColor = [UIColor clearColor];
+    [self addSubview:statues];
+    [statues mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self).insets(UIEdgeInsetsMake(0, 0, 0, 0));
+    }];
+    
+    [self addSubview:self.activity];
+    [self.activity startAnimating];
+    [self.activity mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.equalTo(self);
+        make.centerX.equalTo(self);
+    }];
+    
+    
+}
+
+-(UIActivityIndicatorView *)activity
+{
+    if (!_activity) {
+        _activity = [[UIActivityIndicatorView alloc]initWithFrame:CGRectMake(0, 0, 0, 0)];
+        _activity.activityIndicatorViewStyle =  UIActivityIndicatorViewStyleWhiteLarge;
+        _activity.hidesWhenStopped = YES;
+    }
+    return _activity;
+}
+
+
+//构建播放器
 - (void)setPlayer
 {
-    
-    UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(PanAction:)];
+    //给view添加手势,控制音量加减
+    UISwipeGestureRecognizer *pan = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(PanAction:)];
+    [pan setDirection:UISwipeGestureRecognizerDirectionUp];
     [self addGestureRecognizer:pan];
     
+//    UITapGestureRecognizer *Pasuetap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapPause)];
+//    Pasuetap.numberOfTapsRequired = 2;
+//    [self addGestureRecognizer:Pasuetap];
     
-    _PlayerItem = [[AVPlayerItem alloc] initWithURL:[NSURL URLWithString:@"http://61.131.55.99/w/ca57fac6c78b5f4953d14627d4e2f3e4.mp4?type=m3u8.web.cloudplay&key=dadbd53a4bd3e090502b6ab54870bcb1"]];
+    _PlayerItem = [[AVPlayerItem alloc] initWithURL:[NSURL URLWithString:_natureUrl]];
     _Player = [AVPlayer playerWithPlayerItem:_PlayerItem];
     _PlayerLayer = [AVPlayerLayer playerLayerWithPlayer:_Player];
-    _PlayerLayer.videoGravity = AVLayerVideoGravityResizeAspect;
+    _PlayerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
     [self.layer addSublayer:_PlayerLayer];
 //    [_Player play];
     [self addVideoKVO];
 }
 
-- (void)PanAction:(UIPanGestureRecognizer *)pan
+- (void)tapPause
 {
-    if (pan.state == UIGestureRecognizerStateBegan) {
-        _isFinished = NO;
-    }else if (pan.state == UIGestureRecognizerStateChanged) {
-     
-        [self commitTranslation:[pan translationInView:self]];
+//    if (_isStop) {
+//        [_Player play];
+//        _isStop = NO;
+//    }else
+//    {
+//    [_Player pause];
+//        _isStop = YES;
+//    }
+}
+
+
+- (void)sliderValueChange:(UISlider *)slider
+{
+    [self seekValue:slider.value];
+}
+
+
+- (void)seekValue:(float)value {
+    
+    float toBeTime = value *_videoLength;
+    [_Player seekToTime:CMTimeMake(toBeTime, 1) completionHandler:^(BOOL finished) {
         
-    }else if (pan.state == UIGestureRecognizerStateEnded)
-    {
-        _isFinished = YES;
+        NSLog(@"seek Over finished:%@",finished ? @"success ":@"fail");
+    }];
+}
+
+- (void)PanAction:(UISwipeGestureRecognizer *)pan
+{
+    if (pan.state == UISwipeGestureRecognizerDirectionUp) {
+      NSLog(@"%ld",(long)pan.state);
     }
+ 
+    [[UIScreen mainScreen] setBrightness:0.4];
 }
 
 - (void)commitTranslation:(CGPoint)translation
@@ -134,11 +209,16 @@ typedef enum  {
     
     if ([keyPath isEqualToString:@"status"]) {
         AVPlayerItemStatus status = _PlayerItem.status;
+        
+        NSLog(@"%ld",status);
+        
         switch (status) {
             case AVPlayerItemStatusReadyToPlay:
             {
                 NSLog(@"AVPlayerItemStatusReadyToPlay");
                 [_Player play];
+                [_activity stopAnimating];
+                _statuebutton.selected = YES;
 //                _shouldFlushSlider = YES;
 //                _videoLength = floor(_item.asset.duration.value * 1.0/ _item.asset.duration.timescale);
             }
@@ -259,6 +339,18 @@ typedef enum  {
         return [NSString stringWithFormat:@"%ld:%ld",components.minute,components.second];
     }
 }
+
+- (void)cq_videoClickbuttonActionWith:(UIButton *)button
+{
+    button.selected =!button.selected;
+    if (button.selected) {
+        [_Player play];
+    }else
+    {
+        [_Player pause];
+    }
+}
+
 
 
 - (void)dealloc {
