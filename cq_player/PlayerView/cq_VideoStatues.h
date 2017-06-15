@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+
+
 @protocol cq_videoStatuesDelegate <NSObject>
 
 /**
@@ -49,6 +51,13 @@
 @property (nonatomic ,strong)UILabel                    *CurrentTime;
 /**总时长 */
 @property (nonatomic ,strong)UILabel                    *TotalTime;
+
+@property (nonatomic ,strong)UIProgressView             *progressView;
+/**播放进度条 */
+@property (nonatomic ,strong)UISlider                   *Slider;
+@property (nonatomic ,assign)CGFloat                    TotalHour;
+@property (nonatomic ,assign)CGFloat                    CurrentHour;
+
 
 /**重新播放 */
 @property (nonatomic ,strong)UIButton                   *ReplayButton;

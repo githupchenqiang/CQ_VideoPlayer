@@ -8,6 +8,13 @@
 
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
+#import "ASValueTrackingSlider.h"
+
+// 枚举值，包含水平移动方向和垂直移动方向
+typedef NS_ENUM(NSInteger, PanDirection){
+    PanDirectionHorizontalMoved, // 横向移动
+    PanDirectionVerticalMoved    // 纵向移动
+};
 
 @interface CQ_VideoView : UIView
 @property (nonatomic,strong)AVPlayer                *Player;
@@ -15,6 +22,12 @@
 @property (nonatomic ,strong)AVPlayerLayer          *PlayerLayer;
 @property (nonatomic ,strong)id                     timeObser;
 @property (nonatomic ,assign) float                 videoLength;
+/**移动方向的枚举 */
+@property (nonatomic ,assign)PanDirection               panDirection;
+
+@property (nonatomic ,strong)ASValueTrackingSlider         *videoSlider;
+
+
 
 - (instancetype)initWithFrame:(CGRect)frame Url:(NSString *)UrlString Title:(NSString *)Title;
 @end

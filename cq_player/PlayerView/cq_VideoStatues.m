@@ -16,13 +16,13 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        [self addSubviews];
+        [self addSubViewsContraints];
     }
     return self;
 }
 
 /**将状态view添加上*/
-- (void)addSubviews{
+- (void)addSubViewsContraints{
     [self addSubview:self.TopView];
     [self.TopView needsUpdateConstraints];
     [self.TopView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -84,14 +84,37 @@
         make.centerY.mas_equalTo(self.fillScreenButton);
     }];
     
-    [self addSubview:self.ReplayButton];
+    [self.BottomView addSubview:self.progressView];
+    [self.progressView mas_makeConstraints:^(MASConstraintMaker *make) {
+        Mas_left(self.StarButton.mas_right, 45);
+        Mas_Right(self.TotalTime.mas_left, 4);
+        make.centerY.equalTo(self.BottomView);
+    }];
     
+    [self.BottomView addSubview:self.Slider];
+    [self.Slider mas_makeConstraints:^(MASConstraintMaker *make) {
+        Mas_left(self.StarButton.mas_right, 45);
+        Mas_Right(self.TotalTime.mas_left, 4);
+        make.centerY.mas_equalTo(self.BottomView);
+    }];
+    
+    [self addSubview:self.ReplayButton];
     [self.ReplayButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.equalTo(self);
         make.centerY.equalTo(self);
     }];
     [self addgesture];
+    [_CurrentTime addObserver:self forKeyPath:@"text" options:NSKeyValueObservingOptionNew context:nil];
 }
+
+-(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:@"text"]) {
+        [self.Slider setValue:self.CurrentHour/self.TotalHour animated:YES];
+        NSLog(@"===========%f",self.CurrentHour / self.TotalHour);
+    }
+}
+
 
 /** 添加手势*/
 - (void)addgesture
@@ -181,6 +204,12 @@
     }
 }
 
+
+/**
+ 从新播放
+
+ @param button button
+ */
 - (void)ReplayACtion:(UIButton *)button
 {
     if ([_delegate respondsToSelector:@selector(cq_videoReplayButtonActionWith:WithTagNumber:)]) {
@@ -190,7 +219,58 @@
 
 
 
+/**
+ sldier修改值
+
+ @param paramSender slider
+ */
+-(void)SliderValueChange:(UISlider *)paramSender{
+    if ([paramSender isEqual:self.Slider]) {
+        NSLog(@"New value=%f",paramSender.value);
+    }
+}
+
+
+//处理图片大小
+-(UIImage *)OriginImage:(UIImage *)image scaleToSize:(CGSize)size
+{
+    UIGraphicsBeginImageContext(size);
+    [image drawInRect:CGRectMake(0,0, size.width, size.height)];
+    UIImage *scaleImage=UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return scaleImage;
+}
+
+
+
 #pragma mark ===懒加载UI控件====
+
+- (UISlider *)Slider
+{
+    if (!_Slider) {
+        _Slider = [[UISlider alloc]initWithFrame:CGRectZero];
+        _Slider.minimumValue = 0.0;
+        _Slider.maximumValue = 1.0;
+        _Slider.value = 0.0;
+        
+        _Slider.backgroundColor = [UIColor clearColor];
+        UIImage *image = [self OriginImage:[UIImage imageNamed:@"圆点"] scaleToSize:CGSizeMake(30, 30)];
+        [_Slider setThumbImage:image forState:UIControlStateNormal];
+        
+        [_Slider addTarget:self action:@selector(SliderValueChange:) forControlEvents:UIControlEventValueChanged];
+        _Slider.continuous = NO;
+    }
+    return _Slider;
+}
+
+- (UIProgressView *)progressView {
+    if (!_progressView) {
+        _progressView                   = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
+        _progressView.progressTintColor = setTextColor(@"f4f4f4");
+        _progressView.trackTintColor    = setTextColor(@"bbbbbb");
+    }
+    return _progressView;
+}
 
 -(UIButton *)ReplayButton
 {
