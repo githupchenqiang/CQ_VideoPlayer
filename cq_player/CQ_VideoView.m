@@ -30,9 +30,18 @@ typedef enum  {
 @property (nonatomic ,strong)UISlider                       *videoSlider;
 @property (nonatomic ,assign)BOOL                           isStop;
 @property (nonatomic ,strong)UIActivityIndicatorView                     *activity;
+/**状态button */
 @property (nonatomic ,strong)UIButton                       *statuebutton;
+/**描述文字 */
 @property (nonatomic ,strong)NSString                       *desTitle;
+/**播放链接 */
 @property (nonatomic ,strong)NSString                       *natureUrl;
+
+/**是否暂停 */
+@property (nonatomic ,assign)BOOL                           isPause;
+
+/**声明状态view */
+@property (nonatomic ,strong)cq_VideoStatues                *statuesView;
 
 
 
@@ -61,13 +70,13 @@ typedef enum  {
 
 - (void)addTopView
 {
-    cq_VideoStatues *statues = [[cq_VideoStatues alloc]initWithFrame:CGRectZero];
-    statues.delegate = self;
-    _statuebutton = statues.StarButton;
-    statues.Titlelabel.text = _desTitle;
-    statues.backgroundColor = [UIColor clearColor];
-    [self addSubview:statues];
-    [statues mas_makeConstraints:^(MASConstraintMaker *make) {
+    _statuesView = [[cq_VideoStatues alloc]initWithFrame:CGRectZero];
+    _statuesView.delegate = self;
+    _statuebutton = _statuesView.StarButton;
+    _statuesView.Titlelabel.text = _desTitle;
+    _statuesView.backgroundColor = [UIColor clearColor];
+    [self addSubview:_statuesView];
+    [_statuesView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self).insets(UIEdgeInsetsMake(0, 0, 0, 0));
     }];
     
@@ -78,7 +87,36 @@ typedef enum  {
         make.centerX.equalTo(self);
     }];
     
+    dispatch_async(dispatch_get_main_queue(), ^{
+    AVAsset *asset = [AVAsset assetWithURL:[NSURL URLWithString:_natureUrl]];
+    CGFloat time = asset.duration.value / asset.duration.timescale;
     
+    //这里计算总时长有两种方法都可以计算视屏总时长
+    /*
+    NSString *string = [NSString stringWithFormat:@"%f",time - (8 * 60 * 60)]; //这里-后面的不知道为什么,不减就会多出8小时
+        NSTimeInterval createTime = [string longLongValue];
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        [formatter setDateStyle:NSDateFormatterMediumStyle];
+        [formatter setTimeStyle:NSDateFormatterShortStyle];
+        [formatter setDateFormat:@"h:mm:ss"]; // （@"YYYY-MM-dd hh:mm:ss"）----------设置你想要的格式,hh与HH的区别:分别表示12小时制,24小时制
+        NSTimeZone *timeZone = [NSTimeZone timeZoneWithName:@"Asia/Beijing"];
+        [formatter setTimeZone:timeZone];
+        NSDate *confromTimesp = [NSDate dateWithTimeIntervalSince1970:createTime];
+        NSString *confromTimespStr = [formatter stringFromDate:confromTimesp];
+        _statuesView.TotalTime.text = confromTimespStr;
+    */
+    int minute = 0;
+    int index = 0;
+    if (time >= 60) {
+        index  = time / 60;
+        minute = index % 60;
+        time = time - index*60;
+}
+    NSInteger hour = index/60;
+    NSString *totalstring = [NSString stringWithFormat:@"%ld:%d:%.f",(long)hour,minute,time];
+    _statuesView.TotalTime.text = totalstring;
+        
+    });
 }
 
 -(UIActivityIndicatorView *)activity
@@ -99,30 +137,15 @@ typedef enum  {
     UISwipeGestureRecognizer *pan = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(PanAction:)];
     [pan setDirection:UISwipeGestureRecognizerDirectionUp];
     [self addGestureRecognizer:pan];
-    
-//    UITapGestureRecognizer *Pasuetap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapPause)];
-//    Pasuetap.numberOfTapsRequired = 2;
-//    [self addGestureRecognizer:Pasuetap];
-    
-    _PlayerItem = [[AVPlayerItem alloc] initWithURL:[NSURL URLWithString:_natureUrl]];
+
+    AVAsset *asset = [AVAsset assetWithURL:[NSURL URLWithString:_natureUrl]];
+    _PlayerItem = [[AVPlayerItem alloc]initWithAsset:asset];
     _Player = [AVPlayer playerWithPlayerItem:_PlayerItem];
     _PlayerLayer = [AVPlayerLayer playerLayerWithPlayer:_Player];
     _PlayerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
     [self.layer addSublayer:_PlayerLayer];
-//    [_Player play];
     [self addVideoKVO];
-}
-
-- (void)tapPause
-{
-//    if (_isStop) {
-//        [_Player play];
-//        _isStop = NO;
-//    }else
-//    {
-//    [_Player pause];
-//        _isStop = YES;
-//    }
+    [self addVideoTimerObserver];
 }
 
 
@@ -130,7 +153,6 @@ typedef enum  {
 {
     [self seekValue:slider.value];
 }
-
 
 - (void)seekValue:(float)value {
     
@@ -287,7 +309,8 @@ typedef enum  {
     _timeObser = [_Player addPeriodicTimeObserverForInterval:CMTimeMake(1, 1) queue:NULL usingBlock:^(CMTime time) {
         float currentTimeValue = time.value*1.0/time.timescale/self_.videoLength;
         NSString *currentString = [self_ getStringFromCMTime:time];
-        
+        NSLog(@"===%f",self_.videoLength);
+        self_.statuesView.CurrentTime.text = currentString;
 //        if ([self_.someDelegate respondsToSelector:@selector(flushCurrentTime:sliderValue:)] && _shouldFlushSlider) {
 //            [self_.someDelegate flushCurrentTime:currentString sliderValue:currentTimeValue];
 //        } else {
@@ -300,7 +323,6 @@ typedef enum  {
     [_Player removeTimeObserver:_timeObser];
     _timeObser =  nil;
 }
-
 
 #pragma mark - Utils
 - (NSString *)getStringFromCMTime:(CMTime)time
@@ -340,16 +362,82 @@ typedef enum  {
     }
 }
 
+
+#pragma mark===cq_videoStatuesDelegate====
 - (void)cq_videoClickbuttonActionWith:(UIButton *)button
 {
     button.selected =!button.selected;
     if (button.selected) {
         [_Player play];
+        _isPause = NO;
     }else
     {
         [_Player pause];
+        _isPause = YES;
     }
 }
+
+- (void)stopVideo
+{
+    if (!_isPause) {
+        [_Player pause];
+        _isPause = YES;
+        _statuebutton.selected = NO;
+    }else{
+        [_Player play];
+        _isPause = NO;
+        _statuebutton.selected = YES;
+    }
+}
+
+
+
+- (void)toOrientation:(UIInterfaceOrientation)orientation {
+    // 获取到当前状态条的方向
+    UIInterfaceOrientation currentOrientation = [UIApplication sharedApplication].statusBarOrientation;
+    // 判断如果当前方向和要旋转的方向一致,那么不做任何操作
+    if (currentOrientation == orientation) { return; }
+    
+    // 根据要旋转的方向,使用Masonry重新修改限制
+    if (orientation != UIInterfaceOrientationPortrait) {//
+        // 这个地方加判断是为了从全屏的一侧,直接到全屏的另一侧不用修改限制,否则会出错;
+        if (currentOrientation == UIInterfaceOrientationPortrait) {
+            [self removeFromSuperview];
+        }
+    }
+    // iOS6.0之后,设置状态条的方法能使用的前提是shouldAutorotate为NO,也就是说这个视图控制器内,旋转要关掉;
+    // 也就是说在实现这个方法的时候-(BOOL)shouldAutorotate返回值要为NO
+    [[UIApplication sharedApplication] setStatusBarOrientation:orientation animated:NO];
+    // 获取旋转状态条需要的时间:
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.3];
+    // 更改了状态条的方向,但是设备方向UIInterfaceOrientation还是正方向的,这就要设置给你播放视频的视图的方向设置旋转
+    // 给你的播放视频的view视图设置旋转
+    self.transform = CGAffineTransformIdentity;
+    self.transform = [self getTransformRotationAngle];
+    // 开始旋转
+    [UIView commitAnimations];
+}
+
+/**
+ * 获取变换的旋转角度
+ *
+ * @return 角度
+ */
+- (CGAffineTransform)getTransformRotationAngle {
+    // 状态条的方向已经设置过,所以这个就是你想要旋转的方向
+    UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
+    // 根据要进行旋转的方向来计算旋转的角度
+    if (orientation == UIInterfaceOrientationPortrait) {
+        return CGAffineTransformIdentity;
+    } else if (orientation == UIInterfaceOrientationLandscapeLeft){
+        return CGAffineTransformMakeRotation(-M_PI_2);
+    } else if(orientation == UIInterfaceOrientationLandscapeRight){
+        return CGAffineTransformMakeRotation(M_PI_2);
+    }
+    return CGAffineTransformIdentity;
+}
+
 
 
 

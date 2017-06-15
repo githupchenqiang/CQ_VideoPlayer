@@ -16,12 +16,10 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-    
         [self addSubviews];
     }
     return self;
 }
-
 
 /**将状态view添加上*/
 - (void)addSubviews{
@@ -65,6 +63,13 @@
         Mas_left(self.BottomView, 5);
         Mas_Top(self.BottomView, 0);
     }];
+    
+    [self.BottomView addSubview:self.CurrentTime];
+    [self.CurrentTime mas_makeConstraints:^(MASConstraintMaker *make) {
+        Mas_left(self.StarButton.mas_right, 5);
+        make.centerY.mas_equalTo(self.StarButton);
+    }];
+    
 
     [self.BottomView addSubview:self.fillScreenButton];
     [self.fillScreenButton mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -72,17 +77,47 @@
         Mas_Top(self.BottomView, 0);
         Mas_bottom(self.BottomView, 0);
     }];
+    
+    [self.BottomView addSubview:self.TotalTime];
+    [self.TotalTime mas_makeConstraints:^(MASConstraintMaker *make) {
+        Mas_Right(self.fillScreenButton.mas_left, 5);
+        make.centerY.mas_equalTo(self.fillScreenButton);
+    }];
+    
+    
     [self addgesture];
 }
 
+/** 添加手势*/
 - (void)addgesture
 {
+    //添加单次点击手势
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(TapAction:)];
     tap.numberOfTapsRequired = 1;
     [self addGestureRecognizer:tap];
     
+    //添加点击两次手势
+    UITapGestureRecognizer *StopTap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(StopAction:)];
+    StopTap.numberOfTapsRequired = 2;
+    [self addGestureRecognizer:StopTap];
+    //标识需要的stopTap检测失败才执行tap 否则执行stopTap
+    [tap requireGestureRecognizerToFail:StopTap];
+    
 }
 
+
+- (void)StopAction:(UITapGestureRecognizer *)tap
+{
+    if ([_delegate respondsToSelector:@selector(stopVideo)]) {
+        [_delegate stopVideo];
+    }
+}
+
+/**
+ 点击状态条消失
+ 
+ @param tap  点击
+ */
 - (void)TapAction:(UITapGestureRecognizer *)tap
 {
     if (!_isShowStatues) {
@@ -98,26 +133,20 @@
             [self.BottomView mas_updateConstraints:^(MASConstraintMaker *make) {
                 make.top.mas_equalTo(self.mas_bottom).offset(0);
             }];
-            
         }];
     }else
     {
         _isShowStatues = NO;
-        
             [self.TopView mas_updateConstraints:^(MASConstraintMaker *make) {
                 make.top.mas_equalTo(self).offset(0);
                 make.left.mas_equalTo(self).offset(0);
                 make.height.mas_equalTo(30);
                 Mas_Right(self, 0);
             }];
-        
-        
             [self.BottomView mas_updateConstraints:^(MASConstraintMaker *make) {
                make.top.mas_equalTo(self.mas_bottom).offset(-30);
             }];
- 
     }
-    
 }
 
 //返回事件
@@ -148,6 +177,28 @@
     if ([_delegate respondsToSelector:@selector(cq_videoFillScreenWindowWithbutton:)]) {
         [_delegate cq_videoFillScreenWindowWithbutton:button];
     }
+}
+
+#pragma mark ===懒加载UI控件====
+
+-(UILabel *)TotalTime
+{
+    if (!_TotalTime) {
+        _TotalTime = [[UILabel alloc]initWithFrame:CGRectZero];
+        _TotalTime.textColor = setTextColor(@"ffffff");
+        _TotalTime.font = [UIFont systemFontOfSize:12];
+    }
+    return _TotalTime;
+}
+
+-(UILabel *)CurrentTime
+{
+    if (!_CurrentTime) {
+        _CurrentTime = [[UILabel alloc]initWithFrame:CGRectZero];
+        _CurrentTime.textColor = setTextColor(@"ffffff");
+        _CurrentTime.font = [UIFont systemFontOfSize:12];
+    }
+    return _CurrentTime;
 }
 
 
