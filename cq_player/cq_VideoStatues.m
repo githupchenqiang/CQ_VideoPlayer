@@ -84,7 +84,12 @@
         make.centerY.mas_equalTo(self.fillScreenButton);
     }];
     
+    [self addSubview:self.ReplayButton];
     
+    [self.ReplayButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerX.equalTo(self);
+        make.centerY.equalTo(self);
+    }];
     [self addgesture];
 }
 
@@ -102,9 +107,7 @@
     [self addGestureRecognizer:StopTap];
     //标识需要的stopTap检测失败才执行tap 否则执行stopTap
     [tap requireGestureRecognizerToFail:StopTap];
-    
 }
-
 
 - (void)StopAction:(UITapGestureRecognizer *)tap
 {
@@ -115,7 +118,6 @@
 
 /**
  点击状态条消失
- 
  @param tap  点击
  */
 - (void)TapAction:(UITapGestureRecognizer *)tap
@@ -179,7 +181,27 @@
     }
 }
 
+- (void)ReplayACtion:(UIButton *)button
+{
+    if ([_delegate respondsToSelector:@selector(cq_videoReplayButtonActionWith:WithTagNumber:)]) {
+        [_delegate cq_videoReplayButtonActionWith:button WithTagNumber:@0];
+    }
+}
+
+
+
 #pragma mark ===懒加载UI控件====
+
+-(UIButton *)ReplayButton
+{
+    if (!_ReplayButton) {
+        _ReplayButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_ReplayButton setImage:SetImage(@"ZFPlayer_repeat_video") forState:UIControlStateNormal];
+        _ReplayButton.hidden = YES;
+        [_ReplayButton addTarget:self action:@selector(ReplayACtion:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _ReplayButton;
+}
 
 -(UILabel *)TotalTime
 {

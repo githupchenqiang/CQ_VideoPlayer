@@ -14,16 +14,18 @@
  播放状态的Button事件
  @param button button
  */
-- (void)cq_videoClickbuttonActionWith:(UIButton *)button;
+- (void)cq_videoClickbuttonActionWith:(UIButton *)button ;
 
 /**
- 全屏时间
+ 全屏事件
 
  @param button button
  */
 - (void)cq_videoFillScreenWindowWithbutton:(UIButton *)button;
 /**暂停事件*/
 - (void)stopVideo;
+
+- (void)cq_videoReplayButtonActionWith:(UIButton *)button WithTagNumber:(NSNumber *)number;
 
 @end
 
@@ -47,6 +49,9 @@
 @property (nonatomic ,strong)UILabel                    *CurrentTime;
 /**总时长 */
 @property (nonatomic ,strong)UILabel                    *TotalTime;
+
+/**重新播放 */
+@property (nonatomic ,strong)UIButton                   *ReplayButton;
 
 
 /**获取Superview*/

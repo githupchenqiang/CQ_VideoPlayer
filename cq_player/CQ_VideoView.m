@@ -43,10 +43,6 @@ typedef enum  {
 /**声明状态view */
 @property (nonatomic ,strong)cq_VideoStatues                *statuesView;
 
-
-
-
-
 @end
 
 
@@ -219,12 +215,26 @@ typedef enum  {
     [_PlayerItem addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
     [_PlayerItem addObserver:self forKeyPath:@"loadedTimeRanges" options:NSKeyValueObservingOptionNew context:nil];
     [_PlayerItem addObserver:self forKeyPath:@"playbackBufferEmpty" options:NSKeyValueObservingOptionNew context:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playerItemDidReachEnd:)name:AVPlayerItemDidPlayToEndTimeNotification object:self.PlayerItem];
 }
 
 - (void)removeVideoKVO {
     [_PlayerItem removeObserver:self forKeyPath:@"status"];
     [_PlayerItem removeObserver:self forKeyPath:@"loadedTimeRanges"];
     [_PlayerItem removeObserver:self forKeyPath:@"playbackBufferEmpty"];
+    [_PlayerItem removeObserver:self forKeyPath:AVPlayerItemDidPlayToEndTimeNotification];
+}
+
+/**
+ 播放完成
+
+ @param notice notice
+ */
+- (void)playerItemDidReachEnd:(NSNotification *)notice
+{
+    _statuebutton.selected = NO;
+    _statuesView.ReplayButton.hidden = NO;
+    
 }
 
 - (void)observeValueForKeyPath:(nullable NSString *)keyPath ofObject:(nullable id)object change:(nullable NSDictionary<NSString*, id> *)change context:(nullable void *)context {
@@ -307,15 +317,10 @@ typedef enum  {
 - (void)addVideoTimerObserver {
     __weak typeof (self)self_ = self;
     _timeObser = [_Player addPeriodicTimeObserverForInterval:CMTimeMake(1, 1) queue:NULL usingBlock:^(CMTime time) {
-        float currentTimeValue = time.value*1.0/time.timescale/self_.videoLength;
+//        float currentTimeValue = time.value*1.0/time.timescale/self_.videoLength;
         NSString *currentString = [self_ getStringFromCMTime:time];
         NSLog(@"===%f",self_.videoLength);
         self_.statuesView.CurrentTime.text = currentString;
-//        if ([self_.someDelegate respondsToSelector:@selector(flushCurrentTime:sliderValue:)] && _shouldFlushSlider) {
-//            [self_.someDelegate flushCurrentTime:currentString sliderValue:currentTimeValue];
-//        } else {
-//            NSLog(@"no response");
-//        }
     }];
 }
 - (void)removeVideoTimerObserver {
@@ -376,6 +381,32 @@ typedef enum  {
         _isPause = YES;
     }
 }
+
+- (void)cq_videoReplayButtonActionWith:(UIButton *)button WithTagNumber:(NSNumber *)number
+{
+    NSInteger tagNumber = [number integerValue];
+    switch (tagNumber) {
+        case 0:
+            [self seekValue:0];
+            [_Player play];
+            button.hidden = YES;
+            _activity.hidden = NO;
+            [_activity startAnimating];
+            break;
+        case 1:
+            
+            break;
+        case 2:
+            
+            break;
+        case 3:
+            
+            break;
+        default:
+            break;
+    }
+}
+
 
 - (void)stopVideo
 {
