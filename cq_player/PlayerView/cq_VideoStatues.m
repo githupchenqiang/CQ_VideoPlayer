@@ -28,7 +28,7 @@
     [self.TopView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(self).offset(0);
         make.left.mas_equalTo(self).offset(0);
-        make.height.mas_equalTo(30);
+        make.height.mas_equalTo(50);
         Mas_Right(self, 0);
     }];
     
@@ -37,7 +37,7 @@
     [self.BottomView mas_makeConstraints:^(MASConstraintMaker *make) {
         Mas_left(self, 0);
         Mas_bottom(self, 0);
-        Mas_height(30);
+        Mas_height(50);
         Mas_Right(self, 0);
     }];
     
@@ -85,6 +85,7 @@
     }];
     
     [self.BottomView addSubview:self.progressView];
+    [self.progressView setNeedsUpdateConstraints];
     [self.progressView mas_makeConstraints:^(MASConstraintMaker *make) {
         Mas_left(self.StarButton.mas_right, 45);
         Mas_Right(self.TotalTime.mas_left, 4);
@@ -92,6 +93,7 @@
     }];
     
     [self.BottomView addSubview:self.Slider];
+    [self.Slider setNeedsUpdateConstraints];
     [self.Slider mas_makeConstraints:^(MASConstraintMaker *make) {
         Mas_left(self.StarButton.mas_right, 45);
         Mas_Right(self.TotalTime.mas_left, 4);
@@ -149,9 +151,9 @@
         _isShowStatues = YES;
         [UIView animateWithDuration:2.0f animations:^{
            [self.TopView mas_updateConstraints:^(MASConstraintMaker *make) {
-               make.top.mas_equalTo(self).offset(-25);
+               make.top.mas_equalTo(self).offset(-50);
                make.left.mas_equalTo(self).offset(0);
-               make.height.mas_equalTo(30);
+               make.height.mas_equalTo(50);
                Mas_Right(self, 0);
                
            }];
@@ -165,7 +167,7 @@
             [self.TopView mas_updateConstraints:^(MASConstraintMaker *make) {
                 make.top.mas_equalTo(self).offset(0);
                 make.left.mas_equalTo(self).offset(0);
-                make.height.mas_equalTo(30);
+                make.height.mas_equalTo(50);
                 Mas_Right(self, 0);
             }];
             [self.BottomView mas_updateConstraints:^(MASConstraintMaker *make) {
@@ -177,7 +179,9 @@
 //返回事件
 - (void)BackAction:(UIButton *)btn
 {
-    [self.viewController dismissViewControllerAnimated:YES completion:nil];
+    if ([_delegate respondsToSelector:@selector(cq_videoBackview)]) {
+        [_delegate cq_videoBackview];
+    }
 }
 
 /**
@@ -199,6 +203,7 @@
  */
 - (void)ScreenAction:(UIButton *)button
 {
+    _isSelect = !_isSelect;
     if ([_delegate respondsToSelector:@selector(cq_videoFillScreenWindowWithbutton:)]) {
         [_delegate cq_videoFillScreenWindowWithbutton:button];
     }
@@ -226,7 +231,10 @@
  */
 -(void)SliderValueChange:(UISlider *)paramSender{
     if ([paramSender isEqual:self.Slider]) {
-        NSLog(@"New value=%f",paramSender.value);
+        if ([_delegate respondsToSelector:@selector(cq_VideoChangeSlider:)]) {
+            [_delegate cq_VideoChangeSlider:paramSender];
+        }
+        [self.Slider setValue:paramSender.value animated:YES];
     }
 }
 
@@ -240,8 +248,6 @@
     UIGraphicsEndImageContext();
     return scaleImage;
 }
-
-
 
 #pragma mark ===懒加载UI控件====
 
@@ -257,7 +263,7 @@
         UIImage *image = [self OriginImage:[UIImage imageNamed:@"圆点"] scaleToSize:CGSizeMake(30, 30)];
         [_Slider setThumbImage:image forState:UIControlStateNormal];
         
-        [_Slider addTarget:self action:@selector(SliderValueChange:) forControlEvents:UIControlEventValueChanged];
+        [_Slider addTarget:self action:@selector(SliderValueChange:) forControlEvents:UIControlEventTouchDragInside];
         _Slider.continuous = NO;
     }
     return _Slider;
@@ -265,9 +271,12 @@
 
 - (UIProgressView *)progressView {
     if (!_progressView) {
-        _progressView                   = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
+        _progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
+        _progressView.progress = 0.0;
         _progressView.progressTintColor = setTextColor(@"f4f4f4");
-        _progressView.trackTintColor    = setTextColor(@"bbbbbb");
+        _progressView.trackTintColor    = setTextColor(@"b3b3b3");
+        CGAffineTransform transform = CGAffineTransformMakeScale(1.0f, 2.0f);
+        _progressView.transform = transform;
     }
     return _progressView;
 }
@@ -376,7 +385,10 @@
     return nil;
 }
 
-
+-(void)dealloc
+{
+    [_CurrentTime removeObserver:self forKeyPath:@"text"];
+}
 
 
 @end

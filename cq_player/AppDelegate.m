@@ -24,6 +24,14 @@
 
     return YES;
 }
+//支持旋转
+-(BOOL)shouldAutorotate{
+    return NO;
+}
+-(NSUInteger)supportedInterfaceOrientations
+{
+    return UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskLandscapeRight;
+}
 
 
 - (void)applicationWillResignActive:(UIApplication *)application {

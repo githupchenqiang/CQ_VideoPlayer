@@ -10,6 +10,11 @@
 #import <MediaPlayer/MPVolumeView.h>
 #import "cq_VideoStatues.h"
 
+typedef enum {
+    FillScreenType,
+    PortraitScreen
+}ScreenType;
+
 typedef enum  {
     ChangeNone,
     ChangeVoice,
@@ -27,17 +32,15 @@ typedef enum  {
 - (void)zf_controlView:(UIView *)controlView progressSliderValueChanged:(UISlider *)slider;
 /** slider触摸结束 */
 - (void)zf_controlView:(UIView *)controlView progressSliderTouchEnded:(UISlider *)slider;
-
 @end
 
-
 @interface CQ_VideoView ()<cq_videoStatuesDelegate,UIGestureRecognizerDelegate>
-
 /** 判断是否结束本次平移*/
 @property (nonatomic,assign)BOOL                            isFinished;
 @property (nonatomic ,strong)UIPanGestureRecognizer         *PanGesture;
 @property (nonatomic ,strong)UIView                         *darkView;
 @property (nonatomic ,assign) Change                        changeKind;
+@property (nonatomic ,assign)ScreenType                     ScreenType;
 @property (nonatomic ,assign)CGPoint                        lastPoint;
 @property (nonatomic ,strong)MPVolumeView                   *volumeView;
 @property (nonatomic ,strong)UISlider                       *volumeSlider;
@@ -52,10 +55,15 @@ typedef enum  {
 /**是否暂停 */
 @property (nonatomic ,assign)BOOL                           isPause;
 /** 滑杆 */
-@property (nonatomic, strong) UISlider               *volumeViewSlider;
-
+@property (nonatomic, strong) UISlider                      *volumeViewSlider;
 /**声明状态view */
 @property (nonatomic ,strong)cq_VideoStatues                *statuesView;
+/**记录移动的时间 */
+@property (nonatomic ,assign)CGFloat                        seekTime;
+/**是否全屏 */
+@property (nonatomic ,assign)BOOL                           isFullScreen;
+@property (nonatomic ,strong)UIButton                       *ScreenButton;
+
 
 @property (nonatomic ,assign)id<cq_videoViewDelegate>delegate;
 @end
@@ -148,7 +156,7 @@ typedef enum  {
     UISwipeGestureRecognizer *pan = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(PanAction:)];
     [pan setDirection:UISwipeGestureRecognizerDirectionUp];
     [self addGestureRecognizer:pan];
-
+    
     AVAsset *asset = [AVAsset assetWithURL:[NSURL URLWithString:_natureUrl]];
     _PlayerItem = [[AVPlayerItem alloc]initWithAsset:asset];
     _Player = [AVPlayer playerWithPlayerItem:_PlayerItem];
@@ -172,7 +180,6 @@ typedef enum  {
     
     float toBeTime = value *_videoLength;
     [_Player seekToTime:CMTimeMake(toBeTime, 1) completionHandler:^(BOOL finished) {
-        
         NSLog(@"seek Over finished:%@",finished ? @"success ":@"fail");
     }];
 }
@@ -369,6 +376,7 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
     [_PlayerItem removeObserver:self forKeyPath:@"loadedTimeRanges"];
     [_PlayerItem removeObserver:self forKeyPath:@"playbackBufferEmpty"];
     [[NSNotificationCenter defaultCenter]removeObserver:self];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:AVPlayerItemDidPlayToEndTimeNotification object:nil];
 }
 
 /**
@@ -421,8 +429,9 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
         NSTimeInterval timeInterval = [self availableDuration];// 计算缓冲进度
         NSLog(@"已缓存时长 : %f",timeInterval);
         
+        NSLog(@"++++++++++++===========%f",(timeInterval / self.statuesView.TotalHour));
+        [self.statuesView.progressView setProgress:(timeInterval / self.statuesView.TotalHour) animated:YES];
         if (timeInterval > self.getCurrentPlayingTime+5){ // 缓存 大于 播放 当前时长+5
-            
             if (_isPause == NO) { // 接着之前 播放时长 继续播放
                 [self.Player play];
                 self.isPause = YES;
@@ -532,6 +541,44 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
 
 
 #pragma mark===cq_videoStatuesDelegate====
+
+- (void)cq_videoBackview
+{
+    if (_isFullScreen) {
+        _isFullScreen = NO;
+        [self interfaceOrientation:UIInterfaceOrientationPortrait];
+        _ScreenButton.selected = NO;
+        
+    }else
+    {
+    [self.Player pause];
+    [self.viewController dismissViewControllerAnimated:YES completion:nil];
+    }
+}
+
+-(void)cq_videoFillScreenWindowWithbutton:(UIButton *)button
+{
+    button.selected = !button.selected;
+    _ScreenButton = button;
+    if (button.selected) {
+     [self interfaceOrientation:UIInterfaceOrientationLandscapeRight];
+    }else
+    {
+        
+    [self interfaceOrientation:UIInterfaceOrientationPortrait];
+        
+    }
+    
+}
+
+
+-(void)cq_VideoChangeSlider:(UISlider *)slider
+{
+    _seekTime = slider.value;
+    [self seekValue:_seekTime];
+    NSLog(@"******+++++++%f",_seekTime);
+}
+
 - (void)cq_videoClickbuttonActionWith:(UIButton *)button
 {
     button.selected =!button.selected;
@@ -584,6 +631,49 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
     }
 }
 
+#pragma mark 屏幕转屏相关
+
+/**
+ *  屏幕转屏
+ *
+ *  @param orientation 屏幕方向
+ */
+- (void)interfaceOrientation:(UIInterfaceOrientation)orientation {
+    if (orientation == UIInterfaceOrientationLandscapeRight || orientation == UIInterfaceOrientationLandscapeLeft) {
+        // 设置横屏
+        [self setOrientationLandscapeConstraint:orientation];
+    } else if (orientation == UIInterfaceOrientationPortrait) {
+        // 设置竖屏
+        [self setOrientationPortraitConstraint];
+    }
+}
+
+/**
+ *  设置竖屏的约束
+ */
+- (void)setOrientationPortraitConstraint {
+    
+    [self addPlayerToFatherView:_fatherView];
+    [self toOrientation:UIInterfaceOrientationPortrait];
+    self.isFullScreen = NO;
+}
+
+
+- (void)addPlayerToFatherView:(UIView *)view {
+    [self removeFromSuperview];
+    [view addSubview:self];
+    [self mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.edges.mas_offset(UIEdgeInsetsZero);
+    }];
+}
+
+/**
+ *  设置横屏的约束
+ */
+- (void)setOrientationLandscapeConstraint:(UIInterfaceOrientation)orientation {
+    [self toOrientation:orientation];
+    self.isFullScreen = YES;
+}
 
 
 - (void)toOrientation:(UIInterfaceOrientation)orientation {
@@ -591,14 +681,20 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
     UIInterfaceOrientation currentOrientation = [UIApplication sharedApplication].statusBarOrientation;
     // 判断如果当前方向和要旋转的方向一致,那么不做任何操作
     if (currentOrientation == orientation) { return; }
-    
     // 根据要旋转的方向,使用Masonry重新修改限制
     if (orientation != UIInterfaceOrientationPortrait) {//
         // 这个地方加判断是为了从全屏的一侧,直接到全屏的另一侧不用修改限制,否则会出错;
         if (currentOrientation == UIInterfaceOrientationPortrait) {
             [self removeFromSuperview];
+            [[UIApplication sharedApplication].keyWindow insertSubview:self belowSubview:self.statuesView];
+            [self  mas_remakeConstraints:^(MASConstraintMaker *make) {
+                make.width.equalTo(@([UIScreen mainScreen].bounds.size.height));
+                make.height.equalTo(@([UIScreen mainScreen].bounds.size.width));
+                 make.center.equalTo([UIApplication sharedApplication].keyWindow);
+            }];
         }
     }
+    
     // iOS6.0之后,设置状态条的方法能使用的前提是shouldAutorotate为NO,也就是说这个视图控制器内,旋转要关掉;
     // 也就是说在实现这个方法的时候-(BOOL)shouldAutorotate返回值要为NO
     [[UIApplication sharedApplication] setStatusBarOrientation:orientation animated:NO];
@@ -611,6 +707,10 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
     self.transform = [self getTransformRotationAngle];
     // 开始旋转
     [UIView commitAnimations];
+    [self.statuesView layoutIfNeeded];
+    [self.statuesView setNeedsLayout];
+    
+ 
 }
 
 /**
@@ -619,6 +719,7 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
  * @return 角度
  */
 - (CGAffineTransform)getTransformRotationAngle {
+    
     // 状态条的方向已经设置过,所以这个就是你想要旋转的方向
     UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
     // 根据要进行旋转的方向来计算旋转的角度
@@ -631,8 +732,6 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
     }
     return CGAffineTransformIdentity;
 }
-
-
 
 
 /**
@@ -691,7 +790,6 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
 }
 
 
-
 - (ASValueTrackingSlider *)videoSlider
 {
     if (!_videoSlider) {
@@ -747,10 +845,6 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
         [self.delegate zf_controlView:self progressSliderTouchEnded:sender];
     }
 }
-
-
-
-
 
 
 - (void)dealloc {
@@ -976,6 +1070,24 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
     }
     return _volumeSlider;
 }
+- (UIViewController *)viewController
+{
+    for (UIView* next = [self superview]; next; next = next.superview) {
+        UIResponder *nextResponder = [next nextResponder];
+        if ([nextResponder isKindOfClass:[UIViewController class]]) {
+            return (UIViewController *)nextResponder;
+        }
+    }
+    return nil;
+}
+
+
+
+//支持旋转
+-(BOOL)shouldAutorotate{
+    return NO;
+}
+
 
 
 @end

@@ -22,11 +22,12 @@ typedef NS_ENUM(NSInteger, PanDirection){
 @property (nonatomic ,strong)AVPlayerLayer          *PlayerLayer;
 @property (nonatomic ,strong)id                     timeObser;
 @property (nonatomic ,assign) float                 videoLength;
+@property (nonatomic ,strong)UIViewController       *viewController;
+@property (nonatomic ,strong)UIView         *fatherView;
 /**移动方向的枚举 */
 @property (nonatomic ,assign)PanDirection               panDirection;
 
 @property (nonatomic ,strong)ASValueTrackingSlider         *videoSlider;
-
 
 
 - (instancetype)initWithFrame:(CGRect)frame Url:(NSString *)UrlString Title:(NSString *)Title;

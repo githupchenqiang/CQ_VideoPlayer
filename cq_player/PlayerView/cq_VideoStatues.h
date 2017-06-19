@@ -17,7 +17,6 @@
  @param button button
  */
 - (void)cq_videoClickbuttonActionWith:(UIButton *)button ;
-
 /**
  全屏事件
 
@@ -28,6 +27,11 @@
 - (void)stopVideo;
 
 - (void)cq_videoReplayButtonActionWith:(UIButton *)button WithTagNumber:(NSNumber *)number;
+
+- (void)cq_VideoChangeSlider:(UISlider *)slider;
+
+/**返回事件 */
+- (void)cq_videoBackview;
 
 @end
 
@@ -51,23 +55,26 @@
 @property (nonatomic ,strong)UILabel                    *CurrentTime;
 /**总时长 */
 @property (nonatomic ,strong)UILabel                    *TotalTime;
-
+//显示缓存状态
 @property (nonatomic ,strong)UIProgressView             *progressView;
 /**播放进度条 */
 @property (nonatomic ,strong)UISlider                   *Slider;
+/**视屏总时长 */
 @property (nonatomic ,assign)CGFloat                    TotalHour;
+/**当前时长 */
 @property (nonatomic ,assign)CGFloat                    CurrentHour;
-
+/**缓存时间 */
+@property (nonatomic ,assign)CGFloat                    cacheTime;
 
 /**重新播放 */
 @property (nonatomic ,strong)UIButton                   *ReplayButton;
-
-
 /**获取Superview*/
 @property (nonatomic ,strong)UIViewController           *viewController;
-
 /**是否显示上下状态栏*/
 @property (nonatomic ,assign)BOOL                       isShowStatues;
+
+@property (nonatomic ,assign)BOOL                       isSelect;
+
 
 
 
