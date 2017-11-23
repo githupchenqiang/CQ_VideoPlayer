@@ -132,6 +132,24 @@
     [self addGestureRecognizer:StopTap];
     //标识需要的stopTap检测失败才执行tap 否则执行stopTap
     [tap requireGestureRecognizerToFail:StopTap];
+    
+    UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(panAction:)];
+    [self addGestureRecognizer:pan];
+    
+    
+}
+
+
+/**
+ 滑动手势
+
+ @param pan <#pan description#>
+ */
+- (void)panAction:(UIPanGestureRecognizer *)pan
+{
+    if ([_delegate respondsToSelector:@selector(pangestureActionWith:)]) {
+        [_delegate pangestureActionWith:pan];
+    }
 }
 
 - (void)StopAction:(UITapGestureRecognizer *)tap

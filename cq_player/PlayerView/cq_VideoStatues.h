@@ -29,6 +29,8 @@
 
 /**返回事件 */
 - (void)cq_videoBackview;
+-(void)pangestureActionWith:(UIPanGestureRecognizer *)pangesture;
+
 
 @end
 

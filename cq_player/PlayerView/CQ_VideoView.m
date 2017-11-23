@@ -56,6 +56,8 @@ typedef enum  {
 @property (nonatomic, strong) UISlider                      *volumeViewSlider;
 /** 声明状态view */
 @property (nonatomic ,strong)cq_VideoStatues                *statuesView;
+/**快进的总时常*/
+@property (nonatomic ,assign)CGFloat                       sumTime;
 /** 记录移动的时间 */
 @property (nonatomic ,assign)CGFloat                        seekTime;
 /** 是否全屏 */
@@ -67,7 +69,10 @@ typedef enum  {
 /** 全屏按钮*/
 @property (nonatomic ,strong)UIButton                       *ScreenButton;
 /** slider上次的值 */
-@property (nonatomic, assign) CGFloat                sliderLastValue;
+@property (nonatomic, assign)CGFloat                        sliderLastValue;
+/** 是否是设置声音*/
+@property (nonatomic ,assign)BOOL                            isVolume;
+
 @property (nonatomic ,assign)id<cq_videoViewDelegate>delegate;
 @end
 
@@ -225,80 +230,6 @@ typedef enum  {
     }
 }
 
-- (void)panDirection:(UIPanGestureRecognizer *)pan {
-    //根据在view上Pan的位置，确定是调音量还是亮度
-    CGPoint locationPoint = [pan locationInView:self];
-    
-    // 我们要响应水平移动和垂直移动
-    // 根据上次和本次移动的位置，算出一个速率的point
-    CGPoint veloctyPoint = [pan velocityInView:self];
-    
-    // 判断是垂直移动还是水平移动
-    switch (pan.state) {
-        case UIGestureRecognizerStateBegan:{ // 开始移动
-            // 使用绝对值来判断移动的方向
-            CGFloat x = fabs(veloctyPoint.x);
-            CGFloat y = fabs(veloctyPoint.y);
-            if (x > y) { // 水平移动
-                // 取消隐藏
-                self.panDirection = PanDirectionHorizontalMoved;
-                // 给sumTime初值
-                CMTime time       = self.Player.currentTime;
-//                self.sumTime      = time.value/time.timescale;
-            }
-            else if (x < y){ // 垂直移动
-                self.panDirection = PanDirectionVerticalMoved;
-                // 开始滑动的时候,状态改为正在控制音量
-                if (locationPoint.x > self.bounds.size.width / 2) {
-//                    self.isVolume = YES;
-                }else { // 状态改为显示亮度调节
-//                    self.isVolume = NO;
-                }
-            }
-            break;
-        }
-        case UIGestureRecognizerStateChanged:{ // 正在移动
-            switch (self.panDirection) {
-                case PanDirectionHorizontalMoved:{
-                    [self horizontalMoved:veloctyPoint.x]; // 水平移动的方法只要x方向的值
-                    break;
-                }
-                    
-                case PanDirectionVerticalMoved:{
-                    [self verticalMoved:veloctyPoint.y]; // 垂直移动方法只要y方向的值
-                    break;
-                }
-                default:
-                    break;
-            }
-            break;
-        }
-        case UIGestureRecognizerStateEnded:{ // 移动停止
-            // 移动结束也需要判断垂直或者平移
-            // 比如水平移动结束时，要快进到指定位置，如果这里没有判断，当我们调节音量完之后，会出现屏幕跳动的bug
-            switch (self.panDirection) {
-                case PanDirectionHorizontalMoved:{
-//                    self.isPauseByUser = NO;
-//                    [self seekToTime:self.sumTime completionHandler:nil];
-                    // 把sumTime滞空，不然会越加越多
-//                    self.sumTime = 0;
-                    break;
-                }
-                case PanDirectionVerticalMoved:{
-                    // 垂直移动结束后，把状态改为不再控制音量
-//                    self.isVolume = NO;
-                    break;
-                }
-                default:
-                    break;
-            }
-            break;
-        }
-        default:
-            break;
-    }
-}
-
 /**
  *  pan垂直移动的方法
  *
@@ -315,21 +246,19 @@ typedef enum  {
  */
 - (void)horizontalMoved:(CGFloat)value {
     // 每次滑动需要叠加时间
-//    self.sumTime += value / 200;
+    NSLog(@"=======");
+    self.sumTime += value / 500;
+//     需要限定sumTime的范围
+    CMTime totalTime           = self.PlayerItem.duration;
+    CGFloat totalMovieDuration = (CGFloat)totalTime.value/totalTime.timescale;
+    if (self.sumTime > totalMovieDuration) { self.sumTime = totalMovieDuration;}
+    if (self.sumTime < 0) { self.sumTime = 0; }
     
-    // 需要限定sumTime的范围
-//    CMTime totalTime           = self.PlayerItem.duration;
-//    CGFloat totalMovieDuration = (CGFloat)totalTime.value/totalTime.timescale;
-//    if (self.sumTime > totalMovieDuration) { self.sumTime = totalMovieDuration;}
-//    if (self.sumTime < 0) { self.sumTime = 0; }
-//    
-//    BOOL style = false;
-//    if (value > 0) { style = YES; }
-//    if (value < 0) { style = NO; }
-//    if (value == 0) { return; }
-//    
-//    self.isDragged = YES;
-//    [self.controlView zf_playerDraggedTime:self.sumTime totalTime:totalMovieDuration isForward:style hasPreview:NO];
+    BOOL style = false;
+    if (value > 0) { style = YES; }
+    if (value < 0) { style = NO; }
+    if (value == 0) { return; }
+    self.isDragged = YES;
 }
 
 
@@ -618,6 +547,101 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
         [_Player play];
         _isPause = NO;
         _statuebutton.selected = YES;
+    }
+}
+
+/**
+ 滑动快进,声音加减
+
+ @param pangesture 手势
+ */
+-(void)pangestureActionWith:(UIPanGestureRecognizer *)pangesture
+{
+    //根据在view上Pan的位置，确定是调音量还是亮度
+    CGPoint locationPoint = [pangesture locationInView:self];
+    // 我们要响应水平移动和垂直移动
+    // 根据上次和本次移动的位置，算出一个速率的point
+    CGPoint veloctyPoint = [pangesture velocityInView:self];
+    
+    // 判断是垂直移动还是水平移动
+    switch (pangesture.state) {
+        case UIGestureRecognizerStateBegan:{ // 开始移动
+            // 使用绝对值来判断移动的方向
+            CGFloat x = fabs(veloctyPoint.x);
+            CGFloat y = fabs(veloctyPoint.y);
+            if (x > y) { // 水平移动
+                // 取消隐藏
+                self.panDirection = PanDirectionHorizontalMoved;
+                // 给sumTime初值
+                CMTime time       = self.Player.currentTime;
+                self.sumTime      = time.value / time.timescale;
+            }
+            else if (x < y){ // 垂直移动
+                self.panDirection = PanDirectionVerticalMoved;
+                // 开始滑动的时候,状态改为正在控制音量
+                if (locationPoint.x > self.bounds.size.width / 2) {
+                                        self.isVolume = YES;
+                }else { // 状态改为显示亮度调节
+                                        self.isVolume = NO;
+                }
+            }
+            break;
+        }
+        case UIGestureRecognizerStateChanged:{ // 正在移动
+            switch (self.panDirection) {
+                case PanDirectionHorizontalMoved:{
+                    [self horizontalMoved:veloctyPoint.x]; // 水平移动的方法只要x方向的值
+                    break;
+                }
+                    
+                case PanDirectionVerticalMoved:{
+                    [self verticalMoved:veloctyPoint.y]; // 垂直移动方法只要y方向的值
+                    break;
+                }
+                default:
+                    break;
+            }
+            break;
+        }
+        case UIGestureRecognizerStateEnded:{ // 移动停止
+            // 移动结束也需要判断垂直或者平移
+            // 比如水平移动结束时，要快进到指定位置，如果这里没有判断，当我们调节音量完之后，会出现屏幕跳动的bug
+            switch (self.panDirection) {
+                case PanDirectionHorizontalMoved:{
+                    //                    self.isPauseByUser = NO;
+                                        [self seekToTime:self.sumTime completionHandler:nil];
+                    // 把sumTime滞空，不然会越加越多
+                    //                    self.sumTime = 0;
+                    break;
+                }
+                case PanDirectionVerticalMoved:{
+                    // 垂直移动结束后，把状态改为不再控制音量
+                    //                    self.isVolume = NO;
+                    break;
+                }
+                default:
+                    break;
+            }
+            break;
+        }
+        default:
+            break;
+    }
+}
+
+- (void)seekToTime:(CGFloat )time completionHandler:(void(^)(BOOL finished))completionHandler
+{
+    CGFloat total = (CGFloat)self.PlayerItem.duration.value / self.PlayerItem.duration.timescale;
+    //计算出拖动的当前秒数
+    NSInteger dragedSeconds = time;
+    if (self.Player.status == AVPlayerItemStatusReadyToPlay) {
+        [self.Player pause];
+        CMTime DragedTime = CMTimeMake(dragedSeconds, 1);
+        [self.Player seekToTime:DragedTime toleranceBefore:CMTimeMake(1, 1) toleranceAfter:CMTimeMake(1, 1) completionHandler:^(BOOL finished) {
+            [self.Player play];
+            _statuebutton.selected = YES;
+            
+        }];
     }
 }
 
