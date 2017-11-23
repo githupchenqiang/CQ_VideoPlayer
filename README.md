@@ -3,6 +3,8 @@
 
 *持续更新中,现在是是实现基础的播放功能,可以横竖屏切换,*
 ###使用方法,暂时不支持cocoapods的需要手动导入
+**只需将工程cq_player文件夹导入您的项目中在需要播放视屏的地方加入下面的代码即可快速实现视屏播放的功能**
+*功能实现了全面播放,视屏拖拽进度条实现快进与后退,功能持续更新,期待您的关注,觉得还可以记得给我star*
 ```
     NSString *URl = @"http://baobab.wdjcdn.com/1456665467509qingshu.mp4";
     _video = [[CQ_VideoView alloc]initWithFrame:CGRectMake(0, 16, self.view.frame.size.width , self.view.frame.size.width * 9 / 16) Url:URl Title:@"电影名称"];
@@ -26,3 +28,6 @@
 }
 
 ```
+
+
+
