@@ -29,5 +29,8 @@
 
 ```
 
+![图片效果演示]( https://github.com/githupchenqiang/CQ_VideoPlayer/raw/master/Untitled.gif)
+
+
 
 
