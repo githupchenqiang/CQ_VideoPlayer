@@ -46,25 +46,28 @@ typedef enum  {
 @property (nonatomic ,strong)UISlider                       *volumeSlider;
 @property (nonatomic ,assign)BOOL                           isStop;
 @property (nonatomic ,strong)UIActivityIndicatorView                     *activity;
-/**状态button */
+/** 状态button */
 @property (nonatomic ,strong)UIButton                       *statuebutton;
-/**描述文字 */
+/** 描述文字 */
 @property (nonatomic ,strong)NSString                       *desTitle;
-/**播放链接 */
-@property (nonatomic ,strong)NSString                       *natureUrl;
-/**是否暂停 */
+/** 是否暂停 */
 @property (nonatomic ,assign)BOOL                           isPause;
 /** 滑杆 */
 @property (nonatomic, strong) UISlider                      *volumeViewSlider;
-/**声明状态view */
+/** 声明状态view */
 @property (nonatomic ,strong)cq_VideoStatues                *statuesView;
-/**记录移动的时间 */
+/** 记录移动的时间 */
 @property (nonatomic ,assign)CGFloat                        seekTime;
-/**是否全屏 */
+/** 是否全屏 */
 @property (nonatomic ,assign)BOOL                           isFullScreen;
+/** 是否正在拖拽 */
+@property (nonatomic, assign) BOOL                          isDragged;
+/** 视频播放地址 */
+@property (nonatomic ,strong)NSString                       *VideoUrl;
+/** 全屏按钮*/
 @property (nonatomic ,strong)UIButton                       *ScreenButton;
-
-
+/** slider上次的值 */
+@property (nonatomic, assign) CGFloat                sliderLastValue;
 @property (nonatomic ,assign)id<cq_videoViewDelegate>delegate;
 @end
 
@@ -78,13 +81,21 @@ typedef enum  {
     if (self) {
         self.backgroundColor = [UIColor orangeColor];
         _desTitle = Title;
-        _natureUrl = UrlString;
-        [self setPlayer];
+        _VideoUrl = UrlString;
+        [self setPlayerWithUrl:UrlString];
         [self addTopView];
+        [self addNotifications];
        
     }
     return self;
 }
+
+- (void)addNotifications
+{
+    //检测耳机拔出事件
+     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(audioRouteChangeListenerCallback:) name:AVAudioSessionRouteChangeNotification object:nil];
+}
+
 
 
 - (void)addTopView
@@ -107,7 +118,7 @@ typedef enum  {
     }];
     
     dispatch_async(dispatch_get_main_queue(), ^{
-    AVAsset *asset = [AVAsset assetWithURL:[NSURL URLWithString:_natureUrl]];
+    AVAsset *asset = [AVAsset assetWithURL:[NSURL URLWithString:_VideoUrl]];
     CGFloat time = asset.duration.value / asset.duration.timescale;
         _statuesView.TotalHour = time;
     //这里计算总时长有两种方法都可以计算视屏总时长
@@ -138,26 +149,15 @@ typedef enum  {
     });
 }
 
--(UIActivityIndicatorView *)activity
-{
-    if (!_activity) {
-        _activity = [[UIActivityIndicatorView alloc]initWithFrame:CGRectMake(0, 0, 0, 0)];
-        _activity.activityIndicatorViewStyle =  UIActivityIndicatorViewStyleWhiteLarge;
-        _activity.hidesWhenStopped = YES;
-    }
-    return _activity;
-}
-
-
 //构建播放器
-- (void)setPlayer
+- (void)setPlayerWithUrl:(NSString *)UrlString
 {
     //给view添加手势,控制音量加减
     UISwipeGestureRecognizer *pan = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(PanAction:)];
     [pan setDirection:UISwipeGestureRecognizerDirectionUp];
     [self addGestureRecognizer:pan];
     
-    AVAsset *asset = [AVAsset assetWithURL:[NSURL URLWithString:_natureUrl]];
+    AVAsset *asset = [AVAsset assetWithURL:[NSURL URLWithString:UrlString]];
     _PlayerItem = [[AVPlayerItem alloc]initWithAsset:asset];
     _Player = [AVPlayer playerWithPlayerItem:_PlayerItem];
     _PlayerLayer = [AVPlayerLayer playerLayerWithPlayer:_Player];
@@ -223,8 +223,6 @@ typedef enum  {
             //向下滑动
         }
     }
-    
-    
 }
 
 - (void)panDirection:(UIPanGestureRecognizer *)pan {
@@ -265,6 +263,7 @@ typedef enum  {
                     [self horizontalMoved:veloctyPoint.x]; // 水平移动的方法只要x方向的值
                     break;
                 }
+                    
                 case PanDirectionVerticalMoved:{
                     [self verticalMoved:veloctyPoint.y]; // 垂直移动方法只要y方向的值
                     break;
@@ -392,12 +391,8 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
 }
 
 - (void)observeValueForKeyPath:(nullable NSString *)keyPath ofObject:(nullable id)object change:(nullable NSDictionary<NSString*, id> *)change context:(nullable void *)context {
-    
     if ([keyPath isEqualToString:@"status"]) {
         AVPlayerItemStatus status = _PlayerItem.status;
-        
-        NSLog(@"%ld",status);
-        
         switch (status) {
             case AVPlayerItemStatusReadyToPlay:
             {
@@ -405,6 +400,7 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
                 [_Player play];
                 [_activity stopAnimating];
                 _statuebutton.selected = YES;
+                
 //                _shouldFlushSlider = YES;
 //                _videoLength = floor(_item.asset.duration.value * 1.0/ _item.asset.duration.timescale);
             }
@@ -420,16 +416,11 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
                 NSLog(@"%@",_PlayerItem.error);
             }
                 break;
-                
             default:
                 break;
         }
     } else if ([keyPath isEqualToString:@"loadedTimeRanges"]) {
-        
         NSTimeInterval timeInterval = [self availableDuration];// 计算缓冲进度
-        NSLog(@"已缓存时长 : %f",timeInterval);
-        
-        NSLog(@"++++++++++++===========%f",(timeInterval / self.statuesView.TotalHour));
         [self.statuesView.progressView setProgress:(timeInterval / self.statuesView.TotalHour) animated:YES];
         if (timeInterval > self.getCurrentPlayingTime+5){ // 缓存 大于 播放 当前时长+5
             if (_isPause == NO) { // 接着之前 播放时长 继续播放
@@ -438,9 +429,7 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
             }
         }else{
             _isPause = NO;
-            NSLog(@"等待播放，网络出现问题");
         }
-        
     } else if ([keyPath isEqualToString:@"playbackBufferEmpty"]) {
         
     }
@@ -451,13 +440,11 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
 
 #pragma mark - Notic
 - (void)addVideoNotic {
-    
     //Notification
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(movieToEnd:) name:AVPlayerItemDidPlayToEndTimeNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(movieJumped:) name:AVPlayerItemTimeJumpedNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(movieStalle:) name:AVPlayerItemPlaybackStalledNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(backGroundPauseMoive) name:UIApplicationDidEnterBackgroundNotification object:nil];
-    
 }
 
 
@@ -472,15 +459,6 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
 }
 - (void)backGroundPauseMoive {
     NSLog(@"%@",NSStringFromSelector(_cmd));
-}
-
-
-- (void)removeVideoNotic {
-    //
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemDidPlayToEndTimeNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemPlaybackStalledNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemTimeJumpedNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 
@@ -541,7 +519,6 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
 
 
 #pragma mark===cq_videoStatuesDelegate====
-
 - (void)cq_videoBackview
 {
     if (_isFullScreen) {
@@ -553,6 +530,7 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
     {
     [self.Player pause];
     [self.viewController dismissViewControllerAnimated:YES completion:nil];
+        
     }
 }
 
@@ -564,19 +542,29 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
      [self interfaceOrientation:UIInterfaceOrientationLandscapeRight];
     }else
     {
-        
     [self interfaceOrientation:UIInterfaceOrientationPortrait];
-        
     }
-    
 }
 
+/**
+ 快进后退
 
+ @param slider sliderValue
+ */
 -(void)cq_VideoChangeSlider:(UISlider *)slider
 {
-    _seekTime = slider.value;
-    [self seekValue:_seekTime];
-    NSLog(@"******+++++++%f",_seekTime);
+    CGFloat total = (CGFloat)self.PlayerItem.duration.value / self.PlayerItem.duration.timescale;
+    //计算出拖动的当前秒数
+    NSInteger dragedSeconds = floorf(total * slider.value);
+    if (self.Player.status == AVPlayerItemStatusReadyToPlay) {
+        [self.Player pause];
+        CMTime DragedTime = CMTimeMake(dragedSeconds, 1);
+        [self.Player seekToTime:DragedTime toleranceBefore:CMTimeMake(1, 1) toleranceAfter:CMTimeMake(1, 1) completionHandler:^(BOOL finished) {
+            [self.Player play];
+            _statuebutton.selected = YES;
+           
+        }];
+    }
 }
 
 - (void)cq_videoClickbuttonActionWith:(UIButton *)button
@@ -648,6 +636,7 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
     }
 }
 
+
 /**
  *  设置竖屏的约束
  */
@@ -709,8 +698,6 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
     [UIView commitAnimations];
     [self.statuesView layoutIfNeeded];
     [self.statuesView setNeedsLayout];
-    
- 
 }
 
 /**
@@ -746,7 +733,6 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
             break;
         }
     }
-    
     // 使用这个category的应用不会随着手机静音键打开而静音，可在手机静音下播放声音
     NSError *setCategoryError = nil;
     BOOL success = [[AVAudioSession sharedInstance]
@@ -754,11 +740,8 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
                     error: &setCategoryError];
     
     if (!success) { /* handle the error in setCategoryError */ }
-    
     // 监听耳机插入和拔掉通知
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(audioRouteChangeListenerCallback:) name:AVAudioSessionRouteChangeNotification object:nil];
 }
-
 
 /**
  *  耳机插入、拔出事件
@@ -773,7 +756,6 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
         case AVAudioSessionRouteChangeReasonNewDeviceAvailable:
             // 耳机插入
             break;
-            
         case AVAudioSessionRouteChangeReasonOldDeviceUnavailable:
         {
             // 耳机拔掉
@@ -781,7 +763,6 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
             [_Player play];
         }
             break;
-            
         case AVAudioSessionRouteChangeReasonCategoryChange:
             // called at start - also when other audio wants to play
             NSLog(@"AVAudioSessionRouteChangeReasonCategoryChange");
@@ -834,10 +815,30 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
 }
 
 - (void)progressSliderValueChanged:(ASValueTrackingSlider *)sender {
-    if ([self.delegate respondsToSelector:@selector(zf_controlView:progressSliderValueChanged:)]) {
-        [self.delegate zf_controlView:self progressSliderValueChanged:sender];
+//    if ([self.delegate respondsToSelector:@selector(zf_controlView:progressSliderValueChanged:)]) {
+//        [self.delegate zf_controlView:self progressSliderValueChanged:sender];
+//    }
+
+    //拖动改变视频播放进度
+    if (self.Player.currentItem.status == AVPlayerItemStatusReadyToPlay) {
+        self.isDragged = YES;
+        BOOL style = false;
+        CGFloat value = sender.value - self.sliderLastValue;
+        if (value > 0) {style = YES;}
+        if (value < 0) {style = NO;}
+        if (value == 0) {return;}
+        self.sliderLastValue = sender.value;
+        
+        CGFloat totaltime = (CGFloat)_PlayerItem.duration.value/_PlayerItem.duration.timescale;
+        
+        //计算出拖动的当前秒数
+        CGFloat dragedSeconds = floorf(totaltime * sender.value);
+        
+        //转换成CMTime
+        CMTime DragedCMTime = CMTimeMake(dragedSeconds, 1);
     }
 }
+
 
 - (void)progressSliderTouchEnded:(ASValueTrackingSlider *)sender {
 //    self.showing = YES;
@@ -854,12 +855,20 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
     [self removeVideoKVO];
 }
 
+- (void)removeVideoNotic {
+    //
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemDidPlayToEndTimeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemPlaybackStalledNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemTimeJumpedNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
 @end
 
 
 @implementation CQ_VideoView (gesture)
 
 - (void)addSwipeView {
+    
     _PanGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(swipeAction:)];
     [self addGestureRecognizer:_PanGesture];
     [self setUpDarkView];
@@ -904,9 +913,7 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
         default:
             break;
     }
-    
 }
-
 - (void)getChangeKindValue:(CGPoint)pointNow {
     
     switch (_changeKind) {
@@ -1081,13 +1088,27 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
     return nil;
 }
 
-
+-(UIActivityIndicatorView *)activity
+{
+    if (!_activity) {
+        _activity = [[UIActivityIndicatorView alloc]initWithFrame:CGRectMake(0, 0, 0, 0)];
+        _activity.activityIndicatorViewStyle =  UIActivityIndicatorViewStyleWhiteLarge;
+        _activity.hidesWhenStopped = YES;
+    }
+    return _activity;
+}
 
 //支持旋转
 -(BOOL)shouldAutorotate{
     return NO;
 }
 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter]removeObserver:self];
+    [self removeVideoKVO];
+    _Player = nil;
+}
 
 
 @end

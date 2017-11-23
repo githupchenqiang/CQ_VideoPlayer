@@ -351,7 +351,7 @@
 				TargetAttributes = {
 					3E6375191EC45AF60040CF09 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = 8EZCBM6CYX;
+						DevelopmentTeam = KAVSQ575C6;
 						ProvisioningStyle = Automatic;
 					};
 					3E6375321EC45AF70040CF09 = {
@@ -591,13 +591,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 8EZCBM6CYX;
+				CODE_SIGN_IDENTITY = "iPhone Developer: develop02@kensence.com (BG7A3ADEL9)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = KAVSQ575C6;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/cq_player/cq_Player.pch";
 				INFOPLIST_FILE = cq_player/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "MKmdmooc.cq-player";
+				PRODUCT_BUNDLE_IDENTIFIER = MKmdmooc.AVPlayer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Debug;
 		};
@@ -605,13 +610,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 8EZCBM6CYX;
+				CODE_SIGN_IDENTITY = "iPhone Developer: develop02@kensence.com (BG7A3ADEL9)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = KAVSQ575C6;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/cq_player/cq_Player.pch";
 				INFOPLIST_FILE = cq_player/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "MKmdmooc.cq-player";
+				PRODUCT_BUNDLE_IDENTIFIER = MKmdmooc.AVPlayer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Release;
 		};

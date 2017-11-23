@@ -7,11 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
-
-
 @protocol cq_videoStatuesDelegate <NSObject>
-
 /**
  播放状态的Button事件
  @param button button
@@ -19,10 +15,11 @@
 - (void)cq_videoClickbuttonActionWith:(UIButton *)button ;
 /**
  全屏事件
-
+ 
  @param button button
  */
 - (void)cq_videoFillScreenWindowWithbutton:(UIButton *)button;
+
 /**暂停事件*/
 - (void)stopVideo;
 

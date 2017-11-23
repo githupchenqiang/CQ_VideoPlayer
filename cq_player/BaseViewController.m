@@ -23,13 +23,26 @@
 
 -(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
-    [self presentViewController:[ViewController new] animated:YES completion:nil];
+    ViewController *Control = [[ViewController alloc]init];
+    [self presentViewController:Control animated:NO completion:nil];
+    
 }
 
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+//支持旋转
+-(BOOL)shouldAutorotate{
+    return NO;
 }
 
 /*

@@ -25,14 +25,14 @@
 {
     [super viewDidAppear:animated];
     self.view.backgroundColor = [UIColor cyanColor];
-    NSString *URl = @"http://baobab.wdjcdn.com/1456665467509qingshu.mp4";
+    NSString *URl = @"http://wvideo.spriteapp.cn/video/2016/0328/56f8ec01d9bfe_wpd.mp4";
     //这个View大的大小要和你需要视屏大小一样大并且要赋值给CQ_VideoView的fatherView
-    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 16, self.view.frame.size.width , self.view.frame.size.width * 9 / 16)];
-    _video = [[CQ_VideoView alloc]initWithFrame:CGRectMake(0, 16, self.view.frame.size.width , self.view.frame.size.width * 9 / 16) Url:URl Title:@"新木乃伊"];
-    [self.view addSubview:view];
+    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width , self.view.frame.size.width * 9 / 16)];
+    _video = [[CQ_VideoView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width , self.view.frame.size.width * 9 / 16) Url:URl Title:@"新木乃伊"];
     //这个father必须给,否则全屏返回会有问题
     _video.fatherView = view;
     _video.backgroundColor = [UIColor blackColor];
+     [self.view addSubview:view];
     [self.view addSubview:_video];
 }
 
@@ -41,7 +41,6 @@
     [super viewWillDisappear:animated];
     self.video = nil;
 }
-
 
 - (void)viewDidLoad {
     [super viewDidLoad];

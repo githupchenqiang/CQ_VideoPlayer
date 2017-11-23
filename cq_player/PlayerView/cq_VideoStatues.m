@@ -60,13 +60,13 @@
     [self.BottomView addSubview:self.StarButton];
     [self.StarButton mas_makeConstraints:^(MASConstraintMaker *make) {
         Mas_bottom(self.BottomView, 0);
-        Mas_left(self.BottomView, 5);
+        Mas_left(self.BottomView, 10);
         Mas_Top(self.BottomView, 0);
     }];
     
     [self.BottomView addSubview:self.CurrentTime];
     [self.CurrentTime mas_makeConstraints:^(MASConstraintMaker *make) {
-        Mas_left(self.StarButton.mas_right, 5);
+        Mas_left(self.StarButton.mas_right, 15);
         make.centerY.mas_equalTo(self.StarButton);
     }];
     
@@ -80,7 +80,7 @@
     
     [self.BottomView addSubview:self.TotalTime];
     [self.TotalTime mas_makeConstraints:^(MASConstraintMaker *make) {
-        Mas_Right(self.fillScreenButton.mas_left, 5);
+        Mas_Right(self.fillScreenButton.mas_left, 15);
         make.centerY.mas_equalTo(self.fillScreenButton);
     }];
     
@@ -95,9 +95,9 @@
     [self.BottomView addSubview:self.Slider];
     [self.Slider setNeedsUpdateConstraints];
     [self.Slider mas_makeConstraints:^(MASConstraintMaker *make) {
-        Mas_left(self.StarButton.mas_right, 45);
-        Mas_Right(self.TotalTime.mas_left, 4);
-        make.centerY.mas_equalTo(self.BottomView);
+        Mas_left(self.progressView.mas_left,0);
+        Mas_Right(self.progressView.mas_right, 0);
+        make.centerY.mas_equalTo(self.progressView);
     }];
     
     [self addSubview:self.ReplayButton];
@@ -159,6 +159,7 @@
            }];
             [self.BottomView mas_updateConstraints:^(MASConstraintMaker *make) {
                 make.top.mas_equalTo(self.mas_bottom).offset(0);
+                [self hidenViews];
             }];
         }];
     }else
@@ -172,8 +173,25 @@
             }];
             [self.BottomView mas_updateConstraints:^(MASConstraintMaker *make) {
                make.top.mas_equalTo(self.mas_bottom).offset(-30);
+              [self ShowViews];
             }];
     }
+}
+
+- (void)hidenViews
+{
+    _Slider.hidden = YES;
+    _progressView.hidden = YES;
+    _TotalTime.hidden = YES;
+    _CurrentTime.hidden = YES;
+}
+
+- (void)ShowViews
+{
+    _Slider.hidden = NO;
+    _progressView.hidden = NO;
+    _TotalTime.hidden = NO;
+    _CurrentTime.hidden = NO;
 }
 
 //返回事件
@@ -262,7 +280,6 @@
         _Slider.backgroundColor = [UIColor clearColor];
         UIImage *image = [self OriginImage:[UIImage imageNamed:@"圆点"] scaleToSize:CGSizeMake(30, 30)];
         [_Slider setThumbImage:image forState:UIControlStateNormal];
-        
         [_Slider addTarget:self action:@selector(SliderValueChange:) forControlEvents:UIControlEventTouchDragInside];
         _Slider.continuous = NO;
     }
