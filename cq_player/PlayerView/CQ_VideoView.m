@@ -425,6 +425,8 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
         if (timeInterval > self.getCurrentPlayingTime+5){ // 缓存 大于 播放 当前时长+5
             if (_isPause == NO) { // 接着之前 播放时长 继续播放
                 [self.Player play];
+                [_activity stopAnimating];
+                _statuebutton.selected = YES;
                 self.isPause = YES;
             }
         }else{
@@ -1091,7 +1093,8 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
 -(UIActivityIndicatorView *)activity
 {
     if (!_activity) {
-        _activity = [[UIActivityIndicatorView alloc]initWithFrame:CGRectMake(0, 0, 0, 0)];
+        _activity = [[UIActivityIndicatorView alloc]initWithFrame:CGRectMake(20,100,30,30
+                                                                             )];
         _activity.activityIndicatorViewStyle =  UIActivityIndicatorViewStyleWhiteLarge;
         _activity.hidesWhenStopped = YES;
     }

@@ -8,32 +8,73 @@
 
 #import "BaseViewController.h"
 #import "ViewController.h"
-@interface BaseViewController ()
-
+@interface BaseViewController ()<UITableViewDelegate,UITableViewDataSource>
+@property (nonatomic,strong)UITableView             *tabbale;
+@property (nonatomic ,strong)NSArray                *dataArray;
 @end
 
 @implementation BaseViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(100, 100, 70, 20)];
-    label.text = @"播放";
-    [self.view addSubview:label];
+    [self.view addSubview:self.tabbale];
+    _dataArray = @[@"http://7xqhmn.media1.z0.glb.clouddn.com/femorning-20161106.mp4",
+                   @"http://wvideo.spriteapp.cn/video/2016/0328/56f8ec01d9bfe_wpd.mp4",
+                   @"http://baobab.wdjcdn.com/1456117847747a_x264.mp4",
+                   @"http://baobab.wdjcdn.com/14525705791193.mp4",
+                   @"http://baobab.wdjcdn.com/1456459181808howtoloseweight_x264.mp4",
+                   @"http://baobab.wdjcdn.com/1455968234865481297704.mp4",
+                   @"http://baobab.wdjcdn.com/1455782903700jy.mp4",
+                   @"http://baobab.wdjcdn.com/14564977406580.mp4",
+                   @"http://baobab.wdjcdn.com/1456316686552The.mp4",
+                   @"http://baobab.wdjcdn.com/1456480115661mtl.mp4",
+                   @"http://baobab.wdjcdn.com/1456665467509qingshu.mp4",
+                   @"http://baobab.wdjcdn.com/1455614108256t(2).mp4",
+                   @"http://baobab.wdjcdn.com/1456317490140jiyiyuetai_x264.mp4",
+                   @"http://baobab.wdjcdn.com/1455888619273255747085_x264.mp4",
+                   @"http://baobab.wdjcdn.com/1456734464766B(13).mp4",
+                   @"http://baobab.wdjcdn.com/1456653443902B.mp4",
+                   @"http://baobab.wdjcdn.com/1456231710844S(24).mp4"];
 }
 
--(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return _dataArray.count;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 35;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
+    cell.textLabel.text = [NSString stringWithFormat:@"%@",_dataArray[indexPath.row]];
+    return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     ViewController *Control = [[ViewController alloc]init];
-    [self presentViewController:Control animated:NO completion:nil];
-    
+    Control.Url = [NSString stringWithFormat:@"%@",_dataArray[indexPath.row]];
+    [self presentViewController:Control animated:YES completion:nil];
 }
 
 
-- (void)viewWillAppear:(BOOL)animated
+-(UITableView *)tabbale
 {
-    [super viewWillAppear:animated];
-    
+    if (!_tabbale) {
+        _tabbale = [[UITableView alloc]initWithFrame:[UIScreen mainScreen].bounds style:UITableViewStylePlain];
+        _tabbale.delegate = self;
+        _tabbale.dataSource = self;
+        _tabbale.tableHeaderView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 0.001)];
+        _tabbale.tableFooterView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 0.001)];
+        [_tabbale registerClass:[UITableViewCell class] forCellReuseIdentifier:@"Cell"];
+    }
+    return _tabbale;
 }
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -54,5 +95,4 @@
     // Pass the selected object to the new view controller.
 }
 */
-
 @end

@@ -24,8 +24,8 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    self.view.backgroundColor = [UIColor cyanColor];
-    NSString *URl = @"http://wvideo.spriteapp.cn/video/2016/0328/56f8ec01d9bfe_wpd.mp4";
+    self.view.backgroundColor = [UIColor whiteColor];
+    NSString *URl = self.Url;
     //这个View大的大小要和你需要视屏大小一样大并且要赋值给CQ_VideoView的fatherView
     UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width , self.view.frame.size.width * 9 / 16)];
     _video = [[CQ_VideoView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width , self.view.frame.size.width * 9 / 16) Url:URl Title:@"新木乃伊"];
