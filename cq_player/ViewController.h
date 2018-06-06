@@ -10,6 +10,6 @@
 
 @interface ViewController : UIViewController
 
-@property (nonatomic ,strong)NSString           *Url;
+@property (nonatomic ,strong)NSURL           *Url;
 @end
 

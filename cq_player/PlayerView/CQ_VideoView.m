@@ -65,7 +65,7 @@ typedef enum  {
 /** 是否正在拖拽 */
 @property (nonatomic, assign) BOOL                          isDragged;
 /** 视频播放地址 */
-@property (nonatomic ,strong)NSString                       *VideoUrl;
+@property (nonatomic ,strong)NSURL                       *VideoUrl;
 /** 全屏按钮*/
 @property (nonatomic ,strong)UIButton                       *ScreenButton;
 /** slider上次的值 */
@@ -80,14 +80,14 @@ typedef enum  {
 
 @implementation CQ_VideoView
 
-- (instancetype)initWithFrame:(CGRect)frame Url:(NSString *)UrlString Title:(NSString *)Title
+- (instancetype)initWithFrame:(CGRect)frame Url:(NSURL *)Url Title:(NSString *)Title
 {
     self = [super initWithFrame:frame];
     if (self) {
         self.backgroundColor = [UIColor orangeColor];
         _desTitle = Title;
-        _VideoUrl = UrlString;
-        [self setPlayerWithUrl:UrlString];
+        _VideoUrl = Url;
+        [self setPlayerWithUrl:Url];
         [self addTopView];
         [self addNotifications];
        
@@ -155,14 +155,14 @@ typedef enum  {
 }
 
 //构建播放器
-- (void)setPlayerWithUrl:(NSString *)UrlString
+- (void)setPlayerWithUrl:(NSURL *)Url
 {
     //给view添加手势,控制音量加减
     UISwipeGestureRecognizer *pan = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(PanAction:)];
     [pan setDirection:UISwipeGestureRecognizerDirectionUp];
     [self addGestureRecognizer:pan];
     
-    AVAsset *asset = [AVAsset assetWithURL:[NSURL URLWithString:UrlString]];
+    AVAsset *asset = [AVAsset assetWithURL:Url];
     _PlayerItem = [[AVPlayerItem alloc]initWithAsset:asset];
     _Player = [AVPlayer playerWithPlayerItem:_PlayerItem];
     _PlayerLayer = [AVPlayerLayer playerLayerWithPlayer:_Player];

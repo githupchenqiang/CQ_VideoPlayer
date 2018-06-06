@@ -57,7 +57,8 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     ViewController *Control = [[ViewController alloc]init];
-    Control.Url = [NSString stringWithFormat:@"%@",_dataArray[indexPath.row]];
+    NSURL *UrlPath = [NSURL URLWithString:[NSString stringWithFormat:@"%@",_dataArray[indexPath.row]]];
+    Control.Url = UrlPath;
     [self presentViewController:Control animated:YES completion:nil];
 }
 
