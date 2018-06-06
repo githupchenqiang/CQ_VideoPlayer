@@ -123,7 +123,7 @@ typedef enum  {
     }];
     
     dispatch_async(dispatch_get_main_queue(), ^{
-    AVAsset *asset = [AVAsset assetWithURL:[NSURL URLWithString:_VideoUrl]];
+    AVAsset *asset = [AVAsset assetWithURL:_VideoUrl];
     CGFloat time = asset.duration.value / asset.duration.timescale;
         _statuesView.TotalHour = time;
     //这里计算总时长有两种方法都可以计算视屏总时长

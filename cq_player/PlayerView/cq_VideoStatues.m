@@ -396,6 +396,7 @@
 {
     if (!_TopView) {
         _TopView = [[UIView alloc]initWithFrame:CGRectZero];
+        _TopView.backgroundColor = [UIColor colorWithWhite:0.5 alpha:0.5];
     }
     return  _TopView;
 }
@@ -405,6 +406,7 @@
 {
     if (!_BottomView) {
         _BottomView = [[UIView alloc]initWithFrame:CGRectZero];
+        _BottomView.backgroundColor = [UIColor colorWithWhite:0.5 alpha:0.5];
     }
     return _BottomView;
 }
