@@ -123,7 +123,7 @@ typedef enum  {
     }];
     
     dispatch_async(dispatch_get_main_queue(), ^{
-    AVAsset *asset = [AVAsset assetWithURL:[NSURL URLWithString:_VideoUrl]];
+    AVAsset *asset = [AVAsset assetWithURL:_VideoUrl];
     CGFloat time = asset.duration.value / asset.duration.timescale;
         _statuesView.TotalHour = time;
     //这里计算总时长有两种方法都可以计算视屏总时长
@@ -236,7 +236,8 @@ typedef enum  {
  *  @param value void
  */
 - (void)verticalMoved:(CGFloat)value {
-//    self.isVolume ? (self.volumeViewSlider.value -= value / 10000) : ([UIScreen mainScreen].brightness -= value / 10000);
+
+    
 }
 
 /**
@@ -590,6 +591,7 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
         case UIGestureRecognizerStateChanged:{ // 正在移动
             switch (self.panDirection) {
                 case PanDirectionHorizontalMoved:{
+                    [self seekToTime:self.sumTime completionHandler:nil];
                     [self horizontalMoved:veloctyPoint.x]; // 水平移动的方法只要x方向的值
                     break;
                 }
@@ -609,7 +611,7 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
             switch (self.panDirection) {
                 case PanDirectionHorizontalMoved:{
                     //                    self.isPauseByUser = NO;
-                                        [self seekToTime:self.sumTime completionHandler:nil];
+                    [self seekToTime:self.sumTime completionHandler:nil];
                     // 把sumTime滞空，不然会越加越多
                     //                    self.sumTime = 0;
                     break;
