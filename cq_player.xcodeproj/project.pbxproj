@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		0BAC35F220C8DE2800E6CB24 /* 测试.mov in Resources */ = {isa = PBXBuildFile; fileRef = 0BAC35F120C8DE2700E6CB24 /* 测试.mov */; };
+		0BAC35FA20C91BDA00E6CB24 /* resource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0BAC35F920C91BDA00E6CB24 /* resource.bundle */; };
+		0BAC35FD20C9253E00E6CB24 /* BrightnessView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BAC35FC20C9253E00E6CB24 /* BrightnessView.m */; };
 		3E63751F1EC45AF60040CF09 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E63751E1EC45AF60040CF09 /* main.m */; };
 		3E6375221EC45AF60040CF09 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E6375211EC45AF60040CF09 /* AppDelegate.m */; };
 		3E6375251EC45AF60040CF09 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E6375241EC45AF60040CF09 /* ViewController.m */; };
@@ -57,6 +59,9 @@
 
 /* Begin PBXFileReference section */
 		0BAC35F120C8DE2700E6CB24 /* 测试.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = "测试.mov"; sourceTree = "<group>"; };
+		0BAC35F920C91BDA00E6CB24 /* resource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = resource.bundle; sourceTree = "<group>"; };
+		0BAC35FB20C9253E00E6CB24 /* BrightnessView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BrightnessView.h; sourceTree = "<group>"; };
+		0BAC35FC20C9253E00E6CB24 /* BrightnessView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BrightnessView.m; sourceTree = "<group>"; };
 		3E63751A1EC45AF60040CF09 /* cq_player.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = cq_player.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E63751E1EC45AF60040CF09 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		3E6375201EC45AF60040CF09 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -214,10 +219,13 @@
 		3EA143471EF280CB00590499 /* PlayerView */ = {
 			isa = PBXGroup;
 			children = (
+				0BAC35F920C91BDA00E6CB24 /* resource.bundle */,
 				3EA143481EF280CB00590499 /* cq_VideoStatues.h */,
 				3EA143491EF280CB00590499 /* cq_VideoStatues.m */,
 				3EA1434A1EF280CB00590499 /* CQ_VideoView.h */,
 				3EA1434B1EF280CB00590499 /* CQ_VideoView.m */,
+				0BAC35FB20C9253E00E6CB24 /* BrightnessView.h */,
+				0BAC35FC20C9253E00E6CB24 /* BrightnessView.m */,
 			);
 			path = PlayerView;
 			sourceTree = "<group>";
@@ -354,7 +362,7 @@
 				TargetAttributes = {
 					3E6375191EC45AF60040CF09 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = KAVSQ575C6;
+						DevelopmentTeam = 6KFS25Y962;
 						ProvisioningStyle = Automatic;
 					};
 					3E6375321EC45AF70040CF09 = {
@@ -396,6 +404,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0BAC35FA20C91BDA00E6CB24 /* resource.bundle in Resources */,
 				3EA143751EF280CB00590499 /* Info.plist in Resources */,
 				3EA143741EF280CB00590499 /* 返回.png in Resources */,
 				3EA143801EF280CB00590499 /* ZFPlayer.bundle in Resources */,
@@ -439,6 +448,7 @@
 				3EA143811EF280CB00590499 /* ASValuePopUpView.m in Sources */,
 				3EA143721EF280CB00590499 /* cq_VideoStatues.m in Sources */,
 				3EA143731EF280CB00590499 /* CQ_VideoView.m in Sources */,
+				0BAC35FD20C9253E00E6CB24 /* BrightnessView.m in Sources */,
 				3EA1433A1EF222AC00590499 /* BaseViewController.m in Sources */,
 				3EA1437F1EF280CB00590499 /* ViewController+MASAdditions.m in Sources */,
 				3EA143791EF280CB00590499 /* MASLayoutConstraint.m in Sources */,
@@ -598,7 +608,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer: develop02@kensence.com (BG7A3ADEL9)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = KAVSQ575C6;
+				DEVELOPMENT_TEAM = 6KFS25Y962;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/cq_player/cq_Player.pch";
 				INFOPLIST_FILE = cq_player/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -617,7 +627,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer: develop02@kensence.com (BG7A3ADEL9)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = KAVSQ575C6;
+				DEVELOPMENT_TEAM = 6KFS25Y962;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/cq_player/cq_Player.pch";
 				INFOPLIST_FILE = cq_player/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;

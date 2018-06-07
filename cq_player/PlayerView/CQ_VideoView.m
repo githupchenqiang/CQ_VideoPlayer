@@ -194,8 +194,7 @@ typedef enum  {
     if (pan.state == UISwipeGestureRecognizerDirectionUp) {
       NSLog(@"%ld",(long)pan.state);
     }
- 
-    [[UIScreen mainScreen] setBrightness:0.4];
+
 }
 
 - (void)commitTranslation:(CGPoint)translation
@@ -236,7 +235,16 @@ typedef enum  {
  *  @param value void
  */
 - (void)verticalMoved:(CGFloat)value {
-
+    //value值为负值代表向上滑动
+        CGFloat Brightvalue = [UIScreen mainScreen].brightness;
+    if (value > 0) {//向下
+         [[UIScreen mainScreen] setBrightness:Brightvalue - 0.01];
+    }else //向上
+    {
+         [[UIScreen mainScreen] setBrightness:Brightvalue + 0.01];
+    }
+    //调节亮度
+    [_statuesView.brightview updateBrightnessLevel:[UIScreen mainScreen].brightness];
     
 }
 
@@ -248,7 +256,7 @@ typedef enum  {
 - (void)horizontalMoved:(CGFloat)value {
     // 每次滑动需要叠加时间
     NSLog(@"=======");
-    self.sumTime += value / 500;
+    self.sumTime += value / 1000;
 //     需要限定sumTime的范围
     CMTime totalTime           = self.PlayerItem.duration;
     CGFloat totalMovieDuration = (CGFloat)totalTime.value/totalTime.timescale;
@@ -271,7 +279,7 @@ NSTimeInterval timeInterval = [self availableDuration];
 
 CMTime duration11 = self.PlayerItem.duration;
 CGFloat totalDuration = CMTimeGetSeconds(duration11);
-    NSLog(@"===******====%f",timeInterval / totalDuration);
+    
 }
 // 计算缓冲进度
 - (NSTimeInterval)availableDuration {
@@ -401,7 +409,7 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
 //        float currentTimeValue = time.value*1.0/time.timescale/self_.videoLength;
         NSString *currentString = [self_ getStringFromCMTime:time];
         
-        NSLog(@"===%f",self_.videoLength);
+        
         self_.statuesView.CurrentTime.text = currentString;
     }];
 }
@@ -593,11 +601,21 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
                 case PanDirectionHorizontalMoved:{
                     [self seekToTime:self.sumTime completionHandler:nil];
                     [self horizontalMoved:veloctyPoint.x]; // 水平移动的方法只要x方向的值
+                    
+                    [self seekToTime:self.sumTime completionHandler:nil];
+        
                     break;
                 }
                     
                 case PanDirectionVerticalMoved:{
-                    [self verticalMoved:veloctyPoint.y]; // 垂直移动方法只要y方向的值
+                    if (locationPoint.x > self.bounds.size.width / 2) {
+                        
+                        self.isVolume = YES;
+                    }else { // 状态改为显示亮度调节
+                        self.isVolume = NO;
+                        [self verticalMoved:veloctyPoint.y]; // 垂直移动方法只要y方向的值
+                    }
+                    
                     break;
                 }
                 default:
@@ -619,6 +637,9 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
                 case PanDirectionVerticalMoved:{
                     // 垂直移动结束后，把状态改为不再控制音量
                     //                    self.isVolume = NO;
+                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                        _statuesView.brightview.hidden = YES;
+                    });
                     break;
                 }
                 default:

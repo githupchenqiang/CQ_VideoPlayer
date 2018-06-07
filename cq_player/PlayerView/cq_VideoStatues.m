@@ -9,6 +9,10 @@
 #import "cq_VideoStatues.h"
 #import "Masonry.h"
 #import "UIColor+PYSearchExtension.h"
+#import "BrightnessView.h"
+#define ITEMS_HEIGHT  40
+
+
 
 @implementation cq_VideoStatues
 
@@ -28,7 +32,7 @@
     [self.TopView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(self).offset(0);
         make.left.mas_equalTo(self).offset(0);
-        make.height.mas_equalTo(50);
+        make.height.mas_equalTo(ITEMS_HEIGHT);
         Mas_Right(self, 0);
     }];
     
@@ -37,7 +41,7 @@
     [self.BottomView mas_makeConstraints:^(MASConstraintMaker *make) {
         Mas_left(self, 0);
         Mas_bottom(self, 0);
-        Mas_height(50);
+        make.top.mas_equalTo(self.mas_bottom).offset(-ITEMS_HEIGHT);
         Mas_Right(self, 0);
     }];
     
@@ -59,9 +63,11 @@
     
     [self.BottomView addSubview:self.StarButton];
     [self.StarButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        Mas_bottom(self.BottomView, 0);
+        
+        make.centerY.equalTo(self.BottomView);
         Mas_left(self.BottomView, 10);
-        Mas_Top(self.BottomView, 0);
+        Mas_Width(20);
+        Mas_height(20);
     }];
     
     [self.BottomView addSubview:self.CurrentTime];
@@ -89,6 +95,7 @@
     [self.progressView mas_makeConstraints:^(MASConstraintMaker *make) {
         Mas_left(self.StarButton.mas_right, 45);
         Mas_Right(self.TotalTime.mas_left, 4);
+        Mas_height(2);
         make.centerY.equalTo(self.BottomView);
     }];
     
@@ -97,7 +104,8 @@
     [self.Slider mas_makeConstraints:^(MASConstraintMaker *make) {
         Mas_left(self.progressView.mas_left,0);
         Mas_Right(self.progressView.mas_right, 0);
-        make.centerY.mas_equalTo(self.progressView);
+        make.centerY.mas_equalTo(self.progressView).offset(-0.5);
+        make.height.mas_equalTo(2);
     }];
     
     [self addSubview:self.ReplayButton];
@@ -105,15 +113,22 @@
         make.centerX.equalTo(self);
         make.centerY.equalTo(self);
     }];
+  
+    
     [self addgesture];
     [_CurrentTime addObserver:self forKeyPath:@"text" options:NSKeyValueObservingOptionNew context:nil];
+    
+    _brightview = [[BrightnessView alloc]initWithFrame];
+    [self addSubview:_brightview];
+    _brightview.hidden = YES;
+    
 }
 
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
 {
     if ([keyPath isEqualToString:@"text"]) {
         [self.Slider setValue:self.CurrentHour/self.TotalHour animated:YES];
-        NSLog(@"===========%f",self.CurrentHour / self.TotalHour);
+        
     }
 }
 
@@ -169,28 +184,26 @@
         _isShowStatues = YES;
         [UIView animateWithDuration:2.0f animations:^{
            [self.TopView mas_updateConstraints:^(MASConstraintMaker *make) {
-               make.top.mas_equalTo(self).offset(-50);
-               make.left.mas_equalTo(self).offset(0);
-               make.height.mas_equalTo(50);
-               Mas_Right(self, 0);
-               
+               make.top.mas_equalTo(self).offset(-ITEMS_HEIGHT);
            }];
+            
             [self.BottomView mas_updateConstraints:^(MASConstraintMaker *make) {
+                
+                
                 make.top.mas_equalTo(self.mas_bottom).offset(0);
-                [self hidenViews];
+
             }];
+             [self hidenViews];
         }];
     }else
     {
         _isShowStatues = NO;
             [self.TopView mas_updateConstraints:^(MASConstraintMaker *make) {
                 make.top.mas_equalTo(self).offset(0);
-                make.left.mas_equalTo(self).offset(0);
-                make.height.mas_equalTo(50);
-                Mas_Right(self, 0);
+               
             }];
             [self.BottomView mas_updateConstraints:^(MASConstraintMaker *make) {
-               make.top.mas_equalTo(self.mas_bottom).offset(-30);
+               make.top.mas_equalTo(self.mas_bottom).offset(-ITEMS_HEIGHT);
               [self ShowViews];
             }];
     }
@@ -202,6 +215,7 @@
     _progressView.hidden = YES;
     _TotalTime.hidden = YES;
     _CurrentTime.hidden = YES;
+    _StarButton.hidden = YES;
 }
 
 - (void)ShowViews
@@ -210,6 +224,7 @@
     _progressView.hidden = NO;
     _TotalTime.hidden = NO;
     _CurrentTime.hidden = NO;
+    _StarButton.hidden = NO;
 }
 
 //返回事件
@@ -230,7 +245,6 @@
         [_delegate cq_videoClickbuttonActionWith:button];
     }
 }
-
 
 
 /**
@@ -284,7 +298,6 @@
     UIGraphicsEndImageContext();
     return scaleImage;
 }
-
 #pragma mark ===懒加载UI控件====
 
 - (UISlider *)Slider
@@ -312,6 +325,7 @@
         _progressView.trackTintColor    = setTextColor(@"b3b3b3");
         CGAffineTransform transform = CGAffineTransformMakeScale(1.0f, 2.0f);
         _progressView.transform = transform;
+        _progressView.backgroundColor = [UIColor redColor];
     }
     return _progressView;
 }
@@ -396,6 +410,7 @@
 {
     if (!_TopView) {
         _TopView = [[UIView alloc]initWithFrame:CGRectZero];
+        _TopView.backgroundColor = [UIColor colorWithWhite:0.5 alpha:0.5];
     }
     return  _TopView;
 }
@@ -405,6 +420,7 @@
 {
     if (!_BottomView) {
         _BottomView = [[UIView alloc]initWithFrame:CGRectZero];
+        _BottomView.backgroundColor = [UIColor colorWithWhite:0.5 alpha:0.5];
     }
     return _BottomView;
 }
@@ -419,6 +435,12 @@
     }
     return nil;
 }
+
+
+
+
+
+
 
 -(void)dealloc
 {
