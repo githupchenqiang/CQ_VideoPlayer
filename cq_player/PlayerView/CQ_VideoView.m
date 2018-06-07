@@ -247,7 +247,7 @@ typedef enum  {
 - (void)horizontalMoved:(CGFloat)value {
     // 每次滑动需要叠加时间
     NSLog(@"=======");
-    self.sumTime += value / 500;
+    self.sumTime += value / 1000;
 //     需要限定sumTime的范围
     CMTime totalTime           = self.PlayerItem.duration;
     CGFloat totalMovieDuration = (CGFloat)totalTime.value/totalTime.timescale;
@@ -591,6 +591,8 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
             switch (self.panDirection) {
                 case PanDirectionHorizontalMoved:{
                     [self horizontalMoved:veloctyPoint.x]; // 水平移动的方法只要x方向的值
+                    [self seekToTime:self.sumTime completionHandler:nil];
+                    
                     break;
                 }
                     
@@ -609,7 +611,7 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
             switch (self.panDirection) {
                 case PanDirectionHorizontalMoved:{
                     //                    self.isPauseByUser = NO;
-                                        [self seekToTime:self.sumTime completionHandler:nil];
+                    [self seekToTime:self.sumTime completionHandler:nil];
                     // 把sumTime滞空，不然会越加越多
                     //                    self.sumTime = 0;
                     break;

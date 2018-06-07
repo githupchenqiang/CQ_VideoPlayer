@@ -57,8 +57,8 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     ViewController *Control = [[ViewController alloc]init];
-    NSURL *UrlPath = [NSURL URLWithString:[NSString stringWithFormat:@"%@",_dataArray[indexPath.row]]];
-//    NSURL *path = [NSURL fileURLWithPath:[[NSBundle mainBundle]pathForResource:@"move" ofType:@".mov"]];
+//    NSURL *UrlPath = [NSURL URLWithString:[NSString stringWithFormat:@"%@",_dataArray[indexPath.row]]];
+    NSURL *UrlPath = [NSURL fileURLWithPath:[[NSBundle mainBundle]pathForResource:@"move" ofType:@".mov"]];
     Control.Url = UrlPath;
     [self presentViewController:Control animated:YES completion:nil];
 }
