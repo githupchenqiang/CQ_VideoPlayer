@@ -375,7 +375,9 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
                 [_Player play];
                 [_activity stopAnimating];
                 _statuebutton.selected = YES;
-
+                
+                _shouldFlushSlider = YES;
+                _videoLength = floor(_item.asset.duration.value * 1.0/ _item.asset.duration.timescale);
             }
                 break;
             case AVPlayerItemStatusUnknown:
@@ -535,7 +537,7 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
         [self.Player pause];
         CMTime DragedTime = CMTimeMake(dragedSeconds, 1);
         [self.Player seekToTime:DragedTime toleranceBefore:CMTimeMake(1, 1) toleranceAfter:CMTimeMake(1, 1) completionHandler:^(BOOL finished) {
-            [self.Player play];
+            [self.Player pause];
             _statuebutton.selected = YES;
            
         }];
@@ -696,6 +698,7 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
         [self.Player pause];
         CMTime DragedTime = CMTimeMake(dragedSeconds, 1);
         [self.Player seekToTime:DragedTime toleranceBefore:CMTimeMake(1, 1) toleranceAfter:CMTimeMake(1, 1) completionHandler:^(BOOL finished) {
+            [self.Player play];
             [self.Player pause];
             _statuebutton.selected = YES;
             
