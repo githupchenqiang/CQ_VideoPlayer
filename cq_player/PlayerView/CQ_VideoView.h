@@ -30,6 +30,7 @@ typedef NS_ENUM(NSInteger, PanDirection){
 @property (nonatomic ,strong)ASValueTrackingSlider         *videoSlider;
 
 
+
 - (instancetype)initWithFrame:(CGRect)frame Url:(NSURL *)Url Title:(NSString *)Title;
 @end
 

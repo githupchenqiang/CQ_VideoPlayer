@@ -113,15 +113,12 @@
         make.centerX.equalTo(self);
         make.centerY.equalTo(self);
     }];
-  
+    _brightview = [[BrightnessView alloc]initWithType:BrightnessType];
+    _brightview.hidden = YES;
+    [self addSubview:_brightview];
     
     [self addgesture];
     [_CurrentTime addObserver:self forKeyPath:@"text" options:NSKeyValueObservingOptionNew context:nil];
-    
-    _brightview = [[BrightnessView alloc]initWithFrame];
-    [self addSubview:_brightview];
-    _brightview.hidden = YES;
-    
 }
 
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context

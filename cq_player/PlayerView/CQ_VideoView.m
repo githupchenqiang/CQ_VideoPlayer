@@ -235,6 +235,7 @@ typedef enum  {
  *  @param value void
  */
 - (void)verticalMoved:(CGFloat)value {
+   self.statuesView.brightview.hidden = NO;
     //value值为负值代表向上滑动
         CGFloat Brightvalue = [UIScreen mainScreen].brightness;
     if (value > 0) {//向下
@@ -244,8 +245,44 @@ typedef enum  {
          [[UIScreen mainScreen] setBrightness:Brightvalue + 0.01];
     }
     //调节亮度
-    [_statuesView.brightview updateBrightnessLevel:[UIScreen mainScreen].brightness];
+    [self.statuesView.brightview updateBrightnessLevel:[UIScreen mainScreen].brightness];
+}
+
+/**
+ 声音调节
+
+ @param value value
+ */
+- (void)VolumeVerticalMoved:(CGFloat)value{
     
+
+//    //value值为负值代表向上滑动
+    AVAudioSession *audioSession = [AVAudioSession sharedInstance];
+    CGFloat volume = audioSession.outputVolume;
+    CGFloat Brightvalue = volume;
+
+    MPVolumeView *volumeView = [MPVolumeView new];
+    
+    volumeView.showsRouteButton = NO;
+    
+    volumeView.showsVolumeSlider = NO;
+    
+    [self addSubview:volumeView];
+    
+    // __weak __typeof(self)weakSelf = self;
+    
+    [[volumeView subviews] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        if ([obj isKindOfClass:[UISlider class]]) {
+            _volumeViewSlider = obj;//UISlider* volumeViewSlider;
+            *stop = YES;
+        }
+    }];
+    if (value > 0) {//向下
+                [_volumeViewSlider setValue:Brightvalue - 0.1 animated:YES];
+            }else //向上
+            {
+                 [_volumeViewSlider setValue:Brightvalue + 0.1 animated:YES];
+            }
 }
 
 /**
@@ -609,7 +646,7 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
                     
                 case PanDirectionVerticalMoved:{
                     if (locationPoint.x > self.bounds.size.width / 2) {
-                        
+                        [self VolumeVerticalMoved:veloctyPoint.y];
                         self.isVolume = YES;
                     }else { // 状态改为显示亮度调节
                         self.isVolume = NO;
@@ -637,8 +674,8 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
                 case PanDirectionVerticalMoved:{
                     // 垂直移动结束后，把状态改为不再控制音量
                     //                    self.isVolume = NO;
-                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                        _statuesView.brightview.hidden = YES;
+                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                       self.statuesView.brightview.hidden = YES;
                     });
                     break;
                 }

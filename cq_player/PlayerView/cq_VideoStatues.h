@@ -76,8 +76,10 @@
 @property (nonatomic ,assign)BOOL                       isShowStatues;
 
 @property (nonatomic ,assign)BOOL                       isSelect;
-/**声音指示*/
-@property (nonatomic ,strong)BrightnessView               *brightview;
+
+/**亮度和声音调节指示*/
+@property (nonatomic ,strong)BrightnessView                  *brightview;
+
 
 
 

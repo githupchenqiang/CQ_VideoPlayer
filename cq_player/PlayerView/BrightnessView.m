@@ -22,7 +22,10 @@
 @implementation BrightnessView
 - (instancetype)initWithType:(promptViewType)type
 {
-    [self setUpUIWithType:type];
+    if (self = [super initWithFrame:CGRectZero]) {
+        
+        [self setUpUIWithType:type];
+    }
     return  self;
 }
 
@@ -86,7 +89,6 @@
             {
                img.hidden = YES;
             }
-            
         }
     }
 
@@ -123,11 +125,11 @@
     return _Volumtitle;
 }
 
-- (UIImageView *)volumebackImage {
+- (UIImageView *)volumbackImage {
     
     if (!_volumbackImage) {
         _volumbackImage = [[UIImageView alloc] initWithFrame:CGRectMake(self.frame.size.width / 2 - 40,self.frame.size.height / 2 - 40, 79, 76)];
-        _volumbackImage.image  = [UIImage imageNamed:getResourceFromBundleFileName(@"brightness")];
+        _volumbackImage.image  = [UIImage imageNamed:getResourceFromBundleFileName(@"音量")];
     }
     return _volumbackImage;
 }
