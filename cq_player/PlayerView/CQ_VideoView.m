@@ -239,12 +239,14 @@ typedef enum  {
     
     // __weak __typeof(self)weakSelf = self;
     
+    
     [[volumeView subviews] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         if ([obj isKindOfClass:[UISlider class]]) {
             _volumeViewSlider = obj;//UISlider* volumeViewSlider;
             *stop = YES;
         }
     }];
+    
     if (value > 0) {//向下
                 [_volumeViewSlider setValue:Brightvalue - 0.1 animated:YES];
             }else //向上
