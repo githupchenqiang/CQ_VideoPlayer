@@ -9,7 +9,10 @@
 /* Begin PBXBuildFile section */
 		0BAC35F220C8DE2800E6CB24 /* 测试.mov in Resources */ = {isa = PBXBuildFile; fileRef = 0BAC35F120C8DE2700E6CB24 /* 测试.mov */; };
 		0BAC35FA20C91BDA00E6CB24 /* resource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0BAC35F920C91BDA00E6CB24 /* resource.bundle */; };
-		0BAC35FD20C9253E00E6CB24 /* BrightnessView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BAC35FC20C9253E00E6CB24 /* BrightnessView.m */; };
+		0BAC360520CA341800E6CB24 /* BrightnessView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BAC360220CA341800E6CB24 /* BrightnessView.m */; };
+		0BAC360620CA341800E6CB24 /* cq_VideoStatues.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BAC360420CA341800E6CB24 /* cq_VideoStatues.m */; };
+		0BAC360D20CA597000E6CB24 /* CQ_VideoSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BAC360C20CA597000E6CB24 /* CQ_VideoSlider.m */; };
+		0BAC360F20CA638E00E6CB24 /* 23.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BAC360E20CA638E00E6CB24 /* 23.png */; };
 		3E63751F1EC45AF60040CF09 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E63751E1EC45AF60040CF09 /* main.m */; };
 		3E6375221EC45AF60040CF09 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E6375211EC45AF60040CF09 /* AppDelegate.m */; };
 		3E6375251EC45AF60040CF09 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E6375241EC45AF60040CF09 /* ViewController.m */; };
@@ -19,7 +22,6 @@
 		3E6375381EC45AF70040CF09 /* cq_playerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E6375371EC45AF70040CF09 /* cq_playerTests.m */; };
 		3E6375431EC45AF70040CF09 /* cq_playerUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E6375421EC45AF70040CF09 /* cq_playerUITests.m */; };
 		3EA1433A1EF222AC00590499 /* BaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EA143391EF222AC00590499 /* BaseViewController.m */; };
-		3EA143721EF280CB00590499 /* cq_VideoStatues.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EA143491EF280CB00590499 /* cq_VideoStatues.m */; };
 		3EA143731EF280CB00590499 /* CQ_VideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EA1434B1EF280CB00590499 /* CQ_VideoView.m */; };
 		3EA143741EF280CB00590499 /* 返回.png in Resources */ = {isa = PBXBuildFile; fileRef = 3EA1434E1EF280CB00590499 /* 返回.png */; };
 		3EA143751EF280CB00590499 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3EA143501EF280CB00590499 /* Info.plist */; };
@@ -60,8 +62,14 @@
 /* Begin PBXFileReference section */
 		0BAC35F120C8DE2700E6CB24 /* 测试.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = "测试.mov"; sourceTree = "<group>"; };
 		0BAC35F920C91BDA00E6CB24 /* resource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = resource.bundle; sourceTree = "<group>"; };
-		0BAC35FB20C9253E00E6CB24 /* BrightnessView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BrightnessView.h; sourceTree = "<group>"; };
-		0BAC35FC20C9253E00E6CB24 /* BrightnessView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BrightnessView.m; sourceTree = "<group>"; };
+		0BAC360120CA341800E6CB24 /* BrightnessView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrightnessView.h; sourceTree = "<group>"; };
+		0BAC360220CA341800E6CB24 /* BrightnessView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BrightnessView.m; sourceTree = "<group>"; };
+		0BAC360320CA341800E6CB24 /* cq_VideoStatues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cq_VideoStatues.h; sourceTree = "<group>"; };
+		0BAC360420CA341800E6CB24 /* cq_VideoStatues.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cq_VideoStatues.m; sourceTree = "<group>"; };
+		0BAC360720CA347600E6CB24 /* CQPlayerHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CQPlayerHeader.h; sourceTree = "<group>"; };
+		0BAC360B20CA597000E6CB24 /* CQ_VideoSlider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CQ_VideoSlider.h; sourceTree = "<group>"; };
+		0BAC360C20CA597000E6CB24 /* CQ_VideoSlider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CQ_VideoSlider.m; sourceTree = "<group>"; };
+		0BAC360E20CA638E00E6CB24 /* 23.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 23.png; sourceTree = "<group>"; };
 		3E63751A1EC45AF60040CF09 /* cq_player.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = cq_player.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E63751E1EC45AF60040CF09 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		3E6375201EC45AF60040CF09 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -81,8 +89,6 @@
 		3EA143371EF21D1A00590499 /* cq_Player.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cq_Player.pch; sourceTree = "<group>"; };
 		3EA143381EF222AC00590499 /* BaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseViewController.h; sourceTree = "<group>"; };
 		3EA143391EF222AC00590499 /* BaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseViewController.m; sourceTree = "<group>"; };
-		3EA143481EF280CB00590499 /* cq_VideoStatues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cq_VideoStatues.h; sourceTree = "<group>"; };
-		3EA143491EF280CB00590499 /* cq_VideoStatues.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cq_VideoStatues.m; sourceTree = "<group>"; };
 		3EA1434A1EF280CB00590499 /* CQ_VideoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CQ_VideoView.h; sourceTree = "<group>"; };
 		3EA1434B1EF280CB00590499 /* CQ_VideoView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CQ_VideoView.m; sourceTree = "<group>"; };
 		3EA1434E1EF280CB00590499 /* 返回.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "返回.png"; sourceTree = "<group>"; };
@@ -147,6 +153,34 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0BAC35FE20CA341800E6CB24 /* ThirdResource */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ThirdResource;
+			sourceTree = "<group>";
+		};
+		0BAC35FF20CA341800E6CB24 /* Category */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Category;
+			sourceTree = "<group>";
+		};
+		0BAC360020CA341800E6CB24 /* StatueViews */ = {
+			isa = PBXGroup;
+			children = (
+				0BAC360120CA341800E6CB24 /* BrightnessView.h */,
+				0BAC360220CA341800E6CB24 /* BrightnessView.m */,
+				0BAC360E20CA638E00E6CB24 /* 23.png */,
+				0BAC360320CA341800E6CB24 /* cq_VideoStatues.h */,
+				0BAC360420CA341800E6CB24 /* cq_VideoStatues.m */,
+				0BAC360B20CA597000E6CB24 /* CQ_VideoSlider.h */,
+				0BAC360C20CA597000E6CB24 /* CQ_VideoSlider.m */,
+			);
+			path = StatueViews;
+			sourceTree = "<group>";
+		};
 		3E6375111EC45AF60040CF09 = {
 			isa = PBXGroup;
 			children = (
@@ -220,12 +254,12 @@
 			isa = PBXGroup;
 			children = (
 				0BAC35F920C91BDA00E6CB24 /* resource.bundle */,
-				3EA143481EF280CB00590499 /* cq_VideoStatues.h */,
-				3EA143491EF280CB00590499 /* cq_VideoStatues.m */,
+				0BAC35FF20CA341800E6CB24 /* Category */,
+				0BAC360020CA341800E6CB24 /* StatueViews */,
+				0BAC35FE20CA341800E6CB24 /* ThirdResource */,
 				3EA1434A1EF280CB00590499 /* CQ_VideoView.h */,
 				3EA1434B1EF280CB00590499 /* CQ_VideoView.m */,
-				0BAC35FB20C9253E00E6CB24 /* BrightnessView.h */,
-				0BAC35FC20C9253E00E6CB24 /* BrightnessView.m */,
+				0BAC360720CA347600E6CB24 /* CQPlayerHeader.h */,
 			);
 			path = PlayerView;
 			sourceTree = "<group>";
@@ -357,6 +391,7 @@
 		3E6375121EC45AF60040CF09 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				CLASSPREFIX = CQ_;
 				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = QiangChen;
 				TargetAttributes = {
@@ -405,6 +440,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0BAC35FA20C91BDA00E6CB24 /* resource.bundle in Resources */,
+				0BAC360F20CA638E00E6CB24 /* 23.png in Resources */,
 				3EA143751EF280CB00590499 /* Info.plist in Resources */,
 				3EA143741EF280CB00590499 /* 返回.png in Resources */,
 				3EA143801EF280CB00590499 /* ZFPlayer.bundle in Resources */,
@@ -438,6 +474,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3EA1437C1EF280CB00590499 /* NSArray+MASAdditions.m in Sources */,
+				0BAC360520CA341800E6CB24 /* BrightnessView.m in Sources */,
 				3E6375251EC45AF60040CF09 /* ViewController.m in Sources */,
 				3EA1437D1EF280CB00590499 /* NSLayoutConstraint+MASDebugAdditions.m in Sources */,
 				3E6375221EC45AF60040CF09 /* AppDelegate.m in Sources */,
@@ -446,15 +483,15 @@
 				3EA143771EF280CB00590499 /* MASConstraint.m in Sources */,
 				3EA1437B1EF280CB00590499 /* MASViewConstraint.m in Sources */,
 				3EA143811EF280CB00590499 /* ASValuePopUpView.m in Sources */,
-				3EA143721EF280CB00590499 /* cq_VideoStatues.m in Sources */,
 				3EA143731EF280CB00590499 /* CQ_VideoView.m in Sources */,
-				0BAC35FD20C9253E00E6CB24 /* BrightnessView.m in Sources */,
 				3EA1433A1EF222AC00590499 /* BaseViewController.m in Sources */,
 				3EA1437F1EF280CB00590499 /* ViewController+MASAdditions.m in Sources */,
 				3EA143791EF280CB00590499 /* MASLayoutConstraint.m in Sources */,
 				3EA143761EF280CB00590499 /* MASCompositeConstraint.m in Sources */,
 				3E63751F1EC45AF60040CF09 /* main.m in Sources */,
 				3EA143831EF280CB00590499 /* UIColor+PYSearchExtension.m in Sources */,
+				0BAC360620CA341800E6CB24 /* cq_VideoStatues.m in Sources */,
+				0BAC360D20CA597000E6CB24 /* CQ_VideoSlider.m in Sources */,
 				3EA1437A1EF280CB00590499 /* MASViewAttribute.m in Sources */,
 				3EA143821EF280CB00590499 /* ASValueTrackingSlider.m in Sources */,
 			);

@@ -20,15 +20,55 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
+        [self SetUpViews];
         [self addSubViewsContraints];
     }
     return self;
 }
+- (void)SetUpViews{
+    [self addSubview:self.TopView];
+    [self.TopView needsUpdateConstraints];
+    
+    [self addSubview:self.BottomView];
+    [self.BottomView needsUpdateConstraints];
+    
+    [self.TopView addSubview:self.BackButton];
+    
+    [self.TopView addSubview:self.Titlelabel];
+    
+    [self.BottomView addSubview:self.StarButton];
+    
+    [self.BottomView addSubview:self.CurrentTime];
+    
+    [self.BottomView addSubview:self.fillScreenButton];
+    
+    [self.BottomView addSubview:self.TotalTime];
+    
+    [self.BottomView addSubview:self.progressView];
+    [self.progressView setNeedsUpdateConstraints];
+    
+    
+    [self.BottomView addSubview:self.Slider];
+    [self.Slider setNeedsUpdateConstraints];
+    
+    [self addSubview:self.ReplayButton];
+    
+    _brightview = [[BrightnessView alloc]initWithType:BrightnessType];
+    _brightview.hidden = YES;
+    [self addSubview:_brightview];
+    
+    [self addSubview:self.LeftTimeImage];
+    
+    [self addSubview:self.RightTimeImage];
+    
+    [self addgesture];
+    [_CurrentTime addObserver:self forKeyPath:@"text" options:NSKeyValueObservingOptionNew context:nil];
+}
+
+
 
 /**将状态view添加上*/
 - (void)addSubViewsContraints{
-    [self addSubview:self.TopView];
-    [self.TopView needsUpdateConstraints];
     [self.TopView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(self).offset(0);
         make.left.mas_equalTo(self).offset(0);
@@ -36,8 +76,6 @@
         Mas_Right(self, 0);
     }];
     
-    [self addSubview:self.BottomView];
-    [self.BottomView needsUpdateConstraints];
     [self.BottomView mas_makeConstraints:^(MASConstraintMaker *make) {
         Mas_left(self, 0);
         Mas_bottom(self, 0);
@@ -45,23 +83,17 @@
         Mas_Right(self, 0);
     }];
     
-    
-    [self.TopView addSubview:self.BackButton];
     [self.BackButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(self.TopView).offset(5);
         make.centerY.mas_equalTo(self.TopView);
     }];
     
-    
-    [self.TopView addSubview:self.Titlelabel];
     [self.Titlelabel mas_makeConstraints:^(MASConstraintMaker *make) {
         Mas_left(self.BackButton.mas_right, 10);
         make.centerY.mas_equalTo(self.TopView);
         make.right.mas_lessThanOrEqualTo(10);
     }];
     
-    
-    [self.BottomView addSubview:self.StarButton];
     [self.StarButton mas_makeConstraints:^(MASConstraintMaker *make) {
         
         make.centerY.equalTo(self.BottomView);
@@ -70,55 +102,52 @@
         Mas_height(20);
     }];
     
-    [self.BottomView addSubview:self.CurrentTime];
     [self.CurrentTime mas_makeConstraints:^(MASConstraintMaker *make) {
         Mas_left(self.StarButton.mas_right, 15);
         make.centerY.mas_equalTo(self.StarButton);
     }];
     
-
-    [self.BottomView addSubview:self.fillScreenButton];
     [self.fillScreenButton mas_makeConstraints:^(MASConstraintMaker *make) {
         Mas_Right(self.BottomView.mas_right,5);
         Mas_Top(self.BottomView, 0);
         Mas_bottom(self.BottomView, 0);
     }];
     
-    [self.BottomView addSubview:self.TotalTime];
     [self.TotalTime mas_makeConstraints:^(MASConstraintMaker *make) {
         Mas_Right(self.fillScreenButton.mas_left, 15);
         make.centerY.mas_equalTo(self.fillScreenButton);
     }];
     
-    [self.BottomView addSubview:self.progressView];
-    [self.progressView setNeedsUpdateConstraints];
     [self.progressView mas_makeConstraints:^(MASConstraintMaker *make) {
         Mas_left(self.StarButton.mas_right, 45);
         Mas_Right(self.TotalTime.mas_left, 4);
         Mas_height(2);
-        make.centerY.equalTo(self.BottomView);
+        make.centerY.mas_equalTo(self.BottomView);
     }];
     
-    [self.BottomView addSubview:self.Slider];
-    [self.Slider setNeedsUpdateConstraints];
     [self.Slider mas_makeConstraints:^(MASConstraintMaker *make) {
         Mas_left(self.progressView.mas_left,0);
-        Mas_Right(self.progressView.mas_right, 0);
-        make.centerY.mas_equalTo(self.progressView).offset(-0.5);
-        make.height.mas_equalTo(2);
+        Mas_Right(self.TotalTime.mas_left, 4);
+        make.centerY.mas_equalTo(self.BottomView);
+        make.height.mas_equalTo(4);
     }];
     
-    [self addSubview:self.ReplayButton];
     [self.ReplayButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.equalTo(self);
         make.centerY.equalTo(self);
     }];
-    _brightview = [[BrightnessView alloc]initWithType:BrightnessType];
-    _brightview.hidden = YES;
-    [self addSubview:_brightview];
     
-    [self addgesture];
-    [_CurrentTime addObserver:self forKeyPath:@"text" options:NSKeyValueObservingOptionNew context:nil];
+    [self.LeftTimeImage mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.mas_equalTo(self);
+        make.left.mas_equalTo(self).offset(30);
+        make.width.height.mas_equalTo(50);
+    }];
+    
+    [self.RightTimeImage mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.mas_equalTo(self);
+        make.right.mas_equalTo(self).offset(-30);
+        make.width.height.mas_equalTo(50);
+    }];
 }
 
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
@@ -147,10 +176,7 @@
     
     UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(panAction:)];
     [self addGestureRecognizer:pan];
-    
-    
 }
-
 
 /**
  滑动手势
@@ -206,22 +232,22 @@
     }
 }
 
-- (void)hidenViews
-{
+- (void)hidenViews{
     _Slider.hidden = YES;
     _progressView.hidden = YES;
     _TotalTime.hidden = YES;
     _CurrentTime.hidden = YES;
     _StarButton.hidden = YES;
+    _TopView.hidden = YES;
 }
 
-- (void)ShowViews
-{
+- (void)ShowViews{
     _Slider.hidden = NO;
     _progressView.hidden = NO;
     _TotalTime.hidden = NO;
     _CurrentTime.hidden = NO;
     _StarButton.hidden = NO;
+    _TopView.hidden = NO;
 }
 
 //返回事件
@@ -242,7 +268,6 @@
         [_delegate cq_videoClickbuttonActionWith:button];
     }
 }
-
 
 /**
  全屏 /最小
@@ -300,13 +325,13 @@
 - (UISlider *)Slider
 {
     if (!_Slider) {
-        _Slider = [[UISlider alloc]initWithFrame:CGRectZero];
+        _Slider = [[CQ_VideoSlider alloc]initWithFrame:CGRectZero];
         _Slider.minimumValue = 0.0;
         _Slider.maximumValue = 1.0;
         _Slider.value = 0.0;
         
         _Slider.backgroundColor = [UIColor clearColor];
-        UIImage *image = [self OriginImage:[UIImage imageNamed:@"圆点"] scaleToSize:CGSizeMake(30, 30)];
+        UIImage *image = [self OriginImage:[UIImage imageNamed:@"圆点"] scaleToSize:CGSizeMake(35, 35)];
         [_Slider setThumbImage:image forState:UIControlStateNormal];
         [_Slider addTarget:self action:@selector(SliderValueChange:) forControlEvents:UIControlEventTouchDragInside];
         _Slider.continuous = NO;
@@ -314,13 +339,14 @@
     return _Slider;
 }
 
+
 - (UIProgressView *)progressView {
     if (!_progressView) {
         _progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
         _progressView.progress = 0.0;
         _progressView.progressTintColor = setTextColor(@"f4f4f4");
         _progressView.trackTintColor    = setTextColor(@"b3b3b3");
-        CGAffineTransform transform = CGAffineTransformMakeScale(1.0f, 2.0f);
+        CGAffineTransform transform = CGAffineTransformMakeScale(1.0f, 1.0f);
         _progressView.transform = transform;
         _progressView.backgroundColor = [UIColor redColor];
     }
@@ -421,6 +447,29 @@
     }
     return _BottomView;
 }
+
+-(UIImageView *)LeftTimeImage
+{
+    if (!_LeftTimeImage) {
+        _LeftTimeImage = [[UIImageView alloc]initWithFrame:CGRectZero];
+        _LeftTimeImage.image = SetImage(@"ZFPlayer_fast_backward@3x");
+        _LeftTimeImage.backgroundColor = [UIColor colorWithWhite:0.5 alpha:0.5];
+        _LeftTimeImage.hidden = YES;
+    }
+    return _LeftTimeImage;
+}
+
+-(UIImageView *)RightTimeImage
+{
+    if (!_RightTimeImage) {
+        _RightTimeImage = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 50, 50)];
+        _RightTimeImage.backgroundColor = [UIColor colorWithWhite:0.5 alpha:0.5];
+        _RightTimeImage.image = SetImage(@"ZFPlayer_fast_forward@3x");
+        _RightTimeImage.hidden = YES;
+    }
+    return _RightTimeImage;
+}
+
 
 - (UIViewController *)viewController
 {

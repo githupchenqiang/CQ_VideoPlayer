@@ -10,6 +10,7 @@
 #import <MediaPlayer/MediaPlayer.h>
 #import <AVKit/AVKit.h>
 #import "BrightnessView.h"
+#import "CQ_VideoSlider.h"
 @protocol cq_videoStatuesDelegate <NSObject>
 /**
  播放状态的Button事件
@@ -60,7 +61,7 @@
 //显示缓存状态
 @property (nonatomic ,strong)UIProgressView             *progressView;
 /**播放进度条 */
-@property (nonatomic ,strong)UISlider                   *Slider;
+@property (nonatomic ,strong)CQ_VideoSlider                   *Slider;
 /**视屏总时长 */
 @property (nonatomic ,assign)CGFloat                    TotalHour;
 /**当前时长 */
@@ -78,7 +79,18 @@
 @property (nonatomic ,assign)BOOL                       isSelect;
 
 /**亮度和声音调节指示*/
-@property (nonatomic ,strong)BrightnessView                  *brightview;
+@property (nonatomic ,strong)BrightnessView             *brightview;
+
+/**向左滑动指示图片 */
+@property (nonatomic ,strong)UIImageView                *LeftTimeImage;
+
+/** 向右滑动指示图片*/
+@property (nonatomic ,strong)UIImageView                *RightTimeImage;
+
+@property (nonatomic ,strong)UILabel                    *RightFastTimelabel;
+
+@property (nonatomic ,strong)UILabel                    *LeftFastTimelabel;
+
 
 
 

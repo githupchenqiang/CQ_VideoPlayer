@@ -186,6 +186,7 @@ typedef enum  {
     float toBeTime = value *_videoLength;
     [_Player seekToTime:CMTimeMake(toBeTime, 1) completionHandler:^(BOOL finished) {
         NSLog(@"seek Over finished:%@",finished ? @"success ":@"fail");
+     
     }];
 }
 
@@ -197,37 +198,6 @@ typedef enum  {
 
 }
 
-- (void)commitTranslation:(CGPoint)translation
-{
-    CGFloat absX = fabs(translation.x);
-    CGFloat absY = fabs(translation.y);
-    
-    // 设置滑动有效距离
-    if (MAX(absX, absY) < 1)
-        
-        return;
-    
-    if (absX > absY ) {
-        
-        if (translation.x<0) {
-            NSLog(@"向左滑动");
-            //向左滑动
-        }else{
-            
-            NSLog(@"向右滑动");
-            //向右滑动
-        }
-        
-    } else if (absY > absX) {
-        if (translation.y<0) {
-            NSLog(@"向上滑动");
-            //向上滑动
-        }else{
-            NSLog(@"向下滑动");
-            //向下滑动
-        }
-    }
-}
 
 /**
  *  pan垂直移动的方法
@@ -254,8 +224,6 @@ typedef enum  {
  @param value value
  */
 - (void)VolumeVerticalMoved:(CGFloat)value{
-    
-
 //    //value值为负值代表向上滑动
     AVAudioSession *audioSession = [AVAudioSession sharedInstance];
     CGFloat volume = audioSession.outputVolume;
@@ -291,29 +259,31 @@ typedef enum  {
  *  @param value void
  */
 - (void)horizontalMoved:(CGFloat)value {
+    //value  + 增加  -为减少
     // 每次滑动需要叠加时间
-    NSLog(@"=======");
-    self.sumTime += value / 1000;
+    if (value > 0) {
+         self.sumTime += 0.1;
+        _statuesView.RightTimeImage.hidden = NO;
+        _statuesView.LeftTimeImage.hidden = YES;
+    }else
+    {
+         self.sumTime -= 0.1;
+        _statuesView.RightTimeImage.hidden = YES;
+        _statuesView.LeftTimeImage.hidden = NO;
+    }
 //     需要限定sumTime的范围
     CMTime totalTime           = self.PlayerItem.duration;
     CGFloat totalMovieDuration = (CGFloat)totalTime.value/totalTime.timescale;
     if (self.sumTime > totalMovieDuration) { self.sumTime = totalMovieDuration;}
     if (self.sumTime < 0) { self.sumTime = 0; }
-    
-    BOOL style = false;
-    if (value > 0) { style = YES; }
-    if (value < 0) { style = NO; }
-    if (value == 0) { return; }
     self.isDragged = YES;
+    [self seekToTime:self.sumTime completionHandler:nil];
 }
-
-
 
 
 /**缓冲进度 */
 - (void)sizebuff{
 NSTimeInterval timeInterval = [self availableDuration];
-
 CMTime duration11 = self.PlayerItem.duration;
 CGFloat totalDuration = CMTimeGetSeconds(duration11);
     
@@ -327,7 +297,6 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
     NSTimeInterval result = startSeconds + durationSeconds;// 计算缓冲总进度
     return result;
 }
-
 
 
 -(void)layoutSubviews
@@ -362,6 +331,7 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
 {
     _statuebutton.selected = NO;
     _statuesView.ReplayButton.hidden = NO;
+    _statuesView.backgroundColor = [UIColor colorWithWhite:0.3 alpha:0.5];
     
 }
 
@@ -525,7 +495,6 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
 
 /**
  快进后退
-
  @param slider sliderValue
  */
 -(void)cq_VideoChangeSlider:(UISlider *)slider
@@ -537,9 +506,7 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
         [self.Player pause];
         CMTime DragedTime = CMTimeMake(dragedSeconds, 1);
         [self.Player seekToTime:DragedTime toleranceBefore:CMTimeMake(1, 1) toleranceAfter:CMTimeMake(1, 1) completionHandler:^(BOOL finished) {
-            [self.Player pause];
-            _statuebutton.selected = YES;
-           
+            [_Player play];
         }];
     }
 }
@@ -567,6 +534,7 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
             button.hidden = YES;
             _activity.hidden = NO;
             [_activity startAnimating];
+            _statuesView.backgroundColor = [UIColor clearColor];
             break;
         case 1:
             
@@ -636,14 +604,12 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
         case UIGestureRecognizerStateChanged:{ // 正在移动
             switch (self.panDirection) {
                 case PanDirectionHorizontalMoved:{
-                    [self seekToTime:self.sumTime completionHandler:nil];
+                
                     [self horizontalMoved:veloctyPoint.x]; // 水平移动的方法只要x方向的值
-                    
-                    [self seekToTime:self.sumTime completionHandler:nil];
         
                     break;
                 }
-                    
+    
                 case PanDirectionVerticalMoved:{
                     if (locationPoint.x > self.bounds.size.width / 2) {
                         [self VolumeVerticalMoved:veloctyPoint.y];
@@ -665,10 +631,10 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
             // 比如水平移动结束时，要快进到指定位置，如果这里没有判断，当我们调节音量完之后，会出现屏幕跳动的bug
             switch (self.panDirection) {
                 case PanDirectionHorizontalMoved:{
-                    //                    self.isPauseByUser = NO;
-                    [self seekToTime:self.sumTime completionHandler:nil];
-                    // 把sumTime滞空，不然会越加越多
-                    //                    self.sumTime = 0;
+                    [_Player play];
+                    _statuebutton.selected = YES;
+                    _statuesView.LeftTimeImage.hidden = YES;
+                    _statuesView.RightTimeImage.hidden = YES;
                     break;
                 }
                 case PanDirectionVerticalMoved:{
@@ -691,17 +657,13 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
 
 - (void)seekToTime:(CGFloat )time completionHandler:(void(^)(BOOL finished))completionHandler
 {
-    CGFloat total = (CGFloat)self.PlayerItem.duration.value / self.PlayerItem.duration.timescale;
     //计算出拖动的当前秒数
     NSInteger dragedSeconds = time;
     if (self.Player.status == AVPlayerItemStatusReadyToPlay) {
         [self.Player pause];
+         _statuebutton.selected = NO;
         CMTime DragedTime = CMTimeMake(dragedSeconds, 1);
         [self.Player seekToTime:DragedTime toleranceBefore:CMTimeMake(1, 1) toleranceAfter:CMTimeMake(1, 1) completionHandler:^(BOOL finished) {
-            [self.Player play];
-            [self.Player pause];
-            _statuebutton.selected = YES;
-            
         }];
     }
 }
