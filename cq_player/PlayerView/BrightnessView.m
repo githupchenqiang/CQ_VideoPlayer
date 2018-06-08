@@ -10,13 +10,12 @@
 
 @interface BrightnessView ()
 
-@property (nonatomic, strong) UIImageView        *backImage;
-@property (nonatomic, strong) UILabel            *title;
-@property (nonatomic, strong) UIView            *brightnessLevelView;
-@property (nonatomic, strong) NSMutableArray    *tipArray;
-@property (nonatomic, strong) NSTimer            *timer;
-@property (nonatomic, strong) UIImageView        *volumbackImage;
-@property (nonatomic, strong) UILabel            *Volumtitle;
+@property (nonatomic, strong) UIImageView        *backImage; //图片
+@property (nonatomic, strong) UILabel            *title; //标题
+@property (nonatomic, strong) UIView            *brightnessLevelView; //指示大小的方块
+@property (nonatomic, strong) NSMutableArray    *tipArray; //所有方块的数组
+@property (nonatomic, strong) UIImageView        *volumbackImage; //声音的图片
+@property (nonatomic, strong) UILabel            *Volumtitle; //声音的文字
 
 @end
 @implementation BrightnessView

@@ -11,6 +11,7 @@
 #define ZLScreenHeight [UIScreen mainScreen].bounds.size.height
 #define ZLSystemVersion ([[[UIDevice currentDevice] systemVersion] floatValue])
 
+//声音和亮度
 typedef enum : NSUInteger {
     BrightnessType,
     VolumeType,
@@ -19,6 +20,20 @@ typedef enum : NSUInteger {
 
 @interface BrightnessView : UIView
 
+
+/**
+ 初始化
+
+ @param type 选择type
+ @return self
+ */
 - (instancetype)initWithType:(promptViewType)type;
+
+
+/**
+ 设置指示的方块大小
+
+ @param brightnessLevel 0-1
+ */
 - (void)updateBrightnessLevel:(CGFloat)brightnessLevel ;
 @end
