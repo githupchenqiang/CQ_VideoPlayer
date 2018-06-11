@@ -77,7 +77,6 @@ typedef enum  {
 @end
 
 
-
 @implementation CQ_VideoView
 
 - (instancetype)initWithFrame:(CGRect)frame Url:(NSURL *)Url Title:(NSString *)Title
@@ -101,7 +100,6 @@ typedef enum  {
      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(audioRouteChangeListenerCallback:) name:AVAudioSessionRouteChangeNotification object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(OrigionChanged:) name:UIDeviceOrientationDidChangeNotification object:nil];
 }
-
 
 /**
  添加自动识别方向,随方向自动旋转
@@ -131,7 +129,6 @@ typedef enum  {
         
     }
 }
-
 
 - (void)addTopView
 {

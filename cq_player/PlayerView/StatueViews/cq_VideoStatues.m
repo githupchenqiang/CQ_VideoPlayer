@@ -354,7 +354,6 @@
         _LockMessage.text = @"自动方向已锁";
     }
     _isLocked = !_isLocked;
-    
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         self.LockMessage.hidden = YES;
     });
@@ -392,9 +391,6 @@
     }
     return _Slider;
 }
-
-
-
 
 - (UIProgressView *)progressView {
     if (!_progressView) {
@@ -571,8 +567,6 @@
     }
     return nil;
 }
-
-
 
 
 -(void)dealloc

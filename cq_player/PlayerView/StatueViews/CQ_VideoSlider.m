@@ -17,9 +17,4 @@
     return CGRectInset ([super thumbRectForBounds:bounds trackRect:rect value:value], 10 , 10);
 }
 
-
-
-
-
-
 @end
