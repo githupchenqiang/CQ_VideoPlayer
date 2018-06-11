@@ -11,6 +11,8 @@
 #import <AVKit/AVKit.h>
 #import "BrightnessView.h"
 #import "CQ_VideoSlider.h"
+#import "CQPlayerHeader.h"
+
 @protocol cq_videoStatuesDelegate <NSObject>
 /**
  播放状态的Button事件
