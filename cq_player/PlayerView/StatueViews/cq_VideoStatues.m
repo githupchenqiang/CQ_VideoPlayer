@@ -10,6 +10,8 @@
 #import "Masonry.h"
 #import "UIColor+PYSearchExtension.h"
 #import "BrightnessView.h"
+#import "CQ_PublicObject.h"
+
 #define ITEMS_HEIGHT  40
 
 
@@ -22,9 +24,7 @@
     if (self) {
         [self SetUpViews];
         [self addSubViewsContraints];
-        
-        
-        
+    
     }
     return self;
 }
@@ -68,6 +68,9 @@
     [self addSubview:self.LeftTimeImage];
     
     [self addSubview:self.RightTimeImage];
+    
+    [self addSubview:self.LockButton];
+    [self addSubview:self.LockMessage];
     
     [self addgesture];
     [_CurrentTime addObserver:self forKeyPath:@"text" options:NSKeyValueObservingOptionNew context:nil];
@@ -160,6 +163,15 @@
     
     [self.FastTimelabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.center.mas_equalTo(self);
+    }];
+    
+    [self.LockButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self).offset(2);
+        make.centerY.equalTo(self);
+    }];
+    [self.LockMessage mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.center.mas_equalTo(self);
+        make.width.mas_equalTo(100);
     }];
     
 }
@@ -327,7 +339,26 @@
     }
 }
 
-
+/**
+ 锁屏按钮的长按事件
+ @param button 事件
+ */
+- (void)LockButtonAction:(UIButton *)button{
+       _LockMessage.hidden = NO;
+    if (_isLocked) {
+        button.selected = NO;
+        _LockMessage.text = @"自动方向解锁";
+    }else
+    {
+        button.selected = YES;
+        _LockMessage.text = @"自动方向已锁";
+    }
+    _isLocked = !_isLocked;
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        self.LockMessage.hidden = YES;
+    });
+}
 
 //处理图片大小
 -(UIImage *)OriginImage:(UIImage *)image scaleToSize:(CGSize)size
@@ -505,6 +536,30 @@
     return _FastTimelabel;
 }
 
+-(UIButton *)LockButton
+{
+    if (!_LockButton) {
+        _LockButton = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 0, 0)];
+        [_LockButton setBackgroundImage:SetImage(@"ZFPlayer_unlock-nor@3x") forState:UIControlStateNormal];
+        [_LockButton setBackgroundImage:SetImage(@"ZFPlayer_lock-nor@3x") forState:UIControlStateSelected];
+        [_LockButton addTarget:self action:@selector(LockButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _LockButton;
+}
+
+-(UILabel *)LockMessage{
+    if (!_LockMessage) {
+        _LockMessage = [[UILabel alloc]initWithFrame: CGRectZero];
+        _LockMessage.textColor = UIColor.blackColor;
+        _LockMessage.font = [UIFont systemFontOfSize:15];
+        _LockMessage.textAlignment = NSTextAlignmentCenter;
+        _LockMessage.hidden = YES;
+    }
+    return _LockMessage;
+}
+
+
+
 
 - (UIViewController *)viewController
 {
@@ -516,6 +571,9 @@
     }
     return nil;
 }
+
+
+
 
 -(void)dealloc
 {

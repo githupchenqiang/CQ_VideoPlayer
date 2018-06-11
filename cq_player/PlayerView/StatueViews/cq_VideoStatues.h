@@ -111,9 +111,13 @@
 //左右滑动的时间指示
 @property (nonatomic ,strong)UILabel                    *FastTimelabel;
 
+/**锁屏图片 */
+@property (nonatomic ,strong)UIButton                *LockButton;
 
-
+/**是否锁屏了*/
+@property (nonatomic ,assign)BOOL                       isLocked;
 /**声明代理Video*/
 @property (nonatomic ,assign)id<cq_videoStatuesDelegate>delegate;
 
+@property (nonatomic ,strong)UILabel                    *LockMessage;
 @end

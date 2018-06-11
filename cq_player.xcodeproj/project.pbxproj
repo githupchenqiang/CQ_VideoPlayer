@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0B211F1B20CE58E60081A2D3 /* CQ_PublicObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B211F1A20CE58E60081A2D3 /* CQ_PublicObject.m */; };
 		0BAC35F220C8DE2800E6CB24 /* 测试.mov in Resources */ = {isa = PBXBuildFile; fileRef = 0BAC35F120C8DE2700E6CB24 /* 测试.mov */; };
 		0BAC35FA20C91BDA00E6CB24 /* resource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0BAC35F920C91BDA00E6CB24 /* resource.bundle */; };
 		0BAC360520CA341800E6CB24 /* BrightnessView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BAC360220CA341800E6CB24 /* BrightnessView.m */; };
@@ -60,6 +61,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0B211F1920CE58E60081A2D3 /* CQ_PublicObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CQ_PublicObject.h; sourceTree = "<group>"; };
+		0B211F1A20CE58E60081A2D3 /* CQ_PublicObject.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CQ_PublicObject.m; sourceTree = "<group>"; };
 		0BAC35F120C8DE2700E6CB24 /* 测试.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = "测试.mov"; sourceTree = "<group>"; };
 		0BAC35F920C91BDA00E6CB24 /* resource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = resource.bundle; sourceTree = "<group>"; };
 		0BAC360120CA341800E6CB24 /* BrightnessView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrightnessView.h; sourceTree = "<group>"; };
@@ -153,6 +156,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0B211F1820CE58C40081A2D3 /* PublicResourceView */ = {
+			isa = PBXGroup;
+			children = (
+				0B211F1920CE58E60081A2D3 /* CQ_PublicObject.h */,
+				0B211F1A20CE58E60081A2D3 /* CQ_PublicObject.m */,
+			);
+			path = PublicResourceView;
+			sourceTree = "<group>";
+		};
 		0BAC35FE20CA341800E6CB24 /* ThirdResource */ = {
 			isa = PBXGroup;
 			children = (
@@ -170,6 +182,7 @@
 		0BAC360020CA341800E6CB24 /* StatueViews */ = {
 			isa = PBXGroup;
 			children = (
+				0B211F1820CE58C40081A2D3 /* PublicResourceView */,
 				0BAC360120CA341800E6CB24 /* BrightnessView.h */,
 				0BAC360220CA341800E6CB24 /* BrightnessView.m */,
 				0BAC360E20CA638E00E6CB24 /* 23.png */,
@@ -492,6 +505,7 @@
 				3EA143831EF280CB00590499 /* UIColor+PYSearchExtension.m in Sources */,
 				0BAC360620CA341800E6CB24 /* cq_VideoStatues.m in Sources */,
 				0BAC360D20CA597000E6CB24 /* CQ_VideoSlider.m in Sources */,
+				0B211F1B20CE58E60081A2D3 /* CQ_PublicObject.m in Sources */,
 				3EA1437A1EF280CB00590499 /* MASViewAttribute.m in Sources */,
 				3EA143821EF280CB00590499 /* ASValueTrackingSlider.m in Sources */,
 			);

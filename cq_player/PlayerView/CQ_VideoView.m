@@ -99,8 +99,38 @@ typedef enum  {
 {
     //检测耳机拔出事件
      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(audioRouteChangeListenerCallback:) name:AVAudioSessionRouteChangeNotification object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(OrigionChanged:) name:UIDeviceOrientationDidChangeNotification object:nil];
 }
 
+
+/**
+ 添加自动识别方向,随方向自动旋转
+
+ @param notice number
+ */
+- (void)OrigionChanged:(NSNotification *)notice{
+    
+    if (!_statuesView.isLocked) {
+    UIDeviceOrientation duration = [[UIDevice currentDevice] orientation]; //获取方向状态
+    if (duration == 3) {
+        [self interfaceOrientation:UIInterfaceOrientationLandscapeRight];
+        _statuesView.fillScreenButton.selected = YES;
+        _ScreenButton.selected = YES;
+    }else if (duration == 4)
+    {
+        [self interfaceOrientation:UIInterfaceOrientationLandscapeLeft];
+        _statuesView.fillScreenButton.selected = YES;
+        _ScreenButton.selected = YES;
+    }else if (duration == 1){
+    [self interfaceOrientation:UIInterfaceOrientationPortrait];
+        _isFullScreen = NO;
+        _statuesView.fillScreenButton.selected = NO;
+        _ScreenButton.selected = NO;
+    }
+    }else{
+        
+    }
+}
 
 
 - (void)addTopView
@@ -470,13 +500,13 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
     }
 }
 
-
 #pragma mark===cq_videoStatuesDelegate====
 - (void)cq_videoBackview
 {
     if (_isFullScreen) {
-        _isFullScreen = NO;
+     
         [self interfaceOrientation:UIInterfaceOrientationPortrait];
+        _isFullScreen = NO;
         _ScreenButton.selected = NO;
         
     }else
