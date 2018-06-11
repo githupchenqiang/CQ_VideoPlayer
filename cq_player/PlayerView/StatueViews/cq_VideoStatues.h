@@ -27,12 +27,36 @@
 /**暂停事件*/
 - (void)stopVideo;
 
+
+/**
+重新播放的事件
+ @param button button
+ @param number 0
+ */
 - (void)cq_videoReplayButtonActionWith:(UIButton *)button WithTagNumber:(NSNumber *)number;
 
+/**
+ 拖动进度条的事件
+ @param slider slider
+ */
 - (void)cq_VideoChangeSlider:(UISlider *)slider;
+
+
+/**
+ 进度条拖拽结束后,手指离开了屏幕触发的事件
+可以做一些在结束事件后的执行的事件
+ @param slider valueChange
+ */
+- (void)cq_VideoSliderValueChanged:(UISlider *)slider;
 
 /**返回事件 */
 - (void)cq_videoBackview;
+
+/**
+ 本view中添加整体滑动事件,通过判断上下左右滑动的方向做出相应的事件处理
+
+ @param pangesture pan
+ */
 -(void)pangestureActionWith:(UIPanGestureRecognizer *)pangesture;
 
 
@@ -48,8 +72,6 @@
 @property (nonatomic ,strong)UIButton                   *StarButton;
 /**放置上方状态View*/
 @property (nonatomic ,strong)UIView                     *TopView;
-
-//
 /**播放放置下方状态View*/
 @property (nonatomic ,strong)UIView                     *BottomView;
 /**全屏*/
@@ -68,7 +90,6 @@
 @property (nonatomic ,assign)CGFloat                    CurrentHour;
 /**缓存时间 */
 @property (nonatomic ,assign)CGFloat                    cacheTime;
-
 /**重新播放 */
 @property (nonatomic ,strong)UIButton                   *ReplayButton;
 /**获取Superview*/
@@ -89,10 +110,6 @@
 
 //左右滑动的时间指示
 @property (nonatomic ,strong)UILabel                    *FastTimelabel;
-
-
-
-
 
 
 

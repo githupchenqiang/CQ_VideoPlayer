@@ -167,6 +167,7 @@ typedef enum  {
     _Player = [AVPlayer playerWithPlayerItem:_PlayerItem];
     _PlayerLayer = [AVPlayerLayer playerLayerWithPlayer:_Player];
     _PlayerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
+    
     [self.layer addSublayer:_PlayerLayer];
     [self addVideoKVO];
     [self addVideoTimerObserver];
@@ -509,12 +510,24 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
     NSInteger dragedSeconds = floorf(total * slider.value);
     if (self.Player.status == AVPlayerItemStatusReadyToPlay) {
         [self.Player pause];
+        _statuebutton.selected = NO;
         CMTime DragedTime = CMTimeMake(dragedSeconds, 1);
         [self.Player seekToTime:DragedTime toleranceBefore:CMTimeMake(1, 1) toleranceAfter:CMTimeMake(1, 1) completionHandler:^(BOOL finished) {
-            [_Player play];
         }];
     }
 }
+
+/**
+ slider拖拽结束手指离开执行方法
+
+ @param slider slider
+ */
+-(void)cq_VideoSliderValueChanged:(UISlider *)slider
+{
+    _statuebutton.selected = YES;
+    [_Player play];
+}
+
 
 - (void)cq_videoClickbuttonActionWith:(UIButton *)button
 {
@@ -555,7 +568,6 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
             break;
     }
 }
-
 
 - (void)stopVideo
 {

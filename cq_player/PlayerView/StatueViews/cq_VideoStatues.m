@@ -22,9 +22,17 @@
     if (self) {
         [self SetUpViews];
         [self addSubViewsContraints];
+        
+        
+        
     }
     return self;
 }
+
+
+/**
+ 添加子视图 布局
+ */
 - (void)SetUpViews{
     [self addSubview:self.TopView];
     [self.TopView needsUpdateConstraints];
@@ -160,7 +168,6 @@
 {
     if ([keyPath isEqualToString:@"text"]) {
         [self.Slider setValue:self.CurrentHour/self.TotalHour animated:YES];
-        
     }
 }
 
@@ -186,7 +193,6 @@
 
 /**
  滑动手势
-
  @param pan <#pan description#>
  */
 - (void)panAction:(UIPanGestureRecognizer *)pan
@@ -217,8 +223,6 @@
            }];
             
             [self.BottomView mas_updateConstraints:^(MASConstraintMaker *make) {
-                
-                
                 make.top.mas_equalTo(self.mas_bottom).offset(0);
 
             }];
@@ -311,8 +315,18 @@
             [_delegate cq_VideoChangeSlider:paramSender];
         }
         [self.Slider setValue:paramSender.value animated:YES];
+    
     }
 }
+
+- (void)SliderValueChangeEnd:(UISlider *)slider{
+    if ([slider isEqual:self.Slider]) {
+        if ([_delegate respondsToSelector:@selector(cq_VideoSliderValueChanged:)]) {
+            [_delegate cq_VideoSliderValueChanged:slider];
+        }
+    }
+}
+
 
 
 //处理图片大小
@@ -339,12 +353,16 @@
         image = [image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
         [_Slider setThumbImage:image forState:UIControlStateNormal];
         [_Slider addTarget:self action:@selector(SliderValueChange:) forControlEvents:UIControlEventTouchDragInside];
+        [_Slider addTarget:self action:@selector(SliderValueChangeEnd:) forControlEvents:UIControlEventValueChanged];
+        
         _Slider.maximumTrackTintColor = [UIColor greenColor];
         _Slider.minimumTrackTintColor = UIColor.magentaColor;
         _Slider.continuous = NO;
     }
     return _Slider;
 }
+
+
 
 
 - (UIProgressView *)progressView {
@@ -498,12 +516,6 @@
     }
     return nil;
 }
-
-
-
-
-
-
 
 -(void)dealloc
 {
