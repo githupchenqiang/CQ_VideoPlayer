@@ -46,7 +46,7 @@
     
     [self.BottomView addSubview:self.progressView];
     [self.progressView setNeedsUpdateConstraints];
-    
+    [self addSubview:self.FastTimelabel];
     
     [self.BottomView addSubview:self.Slider];
     [self.Slider setNeedsUpdateConstraints];
@@ -86,6 +86,7 @@
     [self.BackButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(self.TopView).offset(5);
         make.centerY.mas_equalTo(self.TopView);
+        Mas_height(ITEMS_HEIGHT);
     }];
     
     [self.Titlelabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -95,26 +96,26 @@
     }];
     
     [self.StarButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        
         make.centerY.equalTo(self.BottomView);
-        Mas_left(self.BottomView, 10);
-        Mas_Width(20);
-        Mas_height(20);
+        Mas_left(self.BottomView,0);
+        Mas_Width(30);
+        Mas_height(ITEMS_HEIGHT);
     }];
     
     [self.CurrentTime mas_makeConstraints:^(MASConstraintMaker *make) {
-        Mas_left(self.StarButton.mas_right, 15);
+        Mas_left(self.StarButton.mas_right, 5);
         make.centerY.mas_equalTo(self.StarButton);
     }];
     
     [self.fillScreenButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        Mas_Right(self.BottomView.mas_right,5);
+        Mas_Right(self.BottomView.mas_right,0);
         Mas_Top(self.BottomView, 0);
         Mas_bottom(self.BottomView, 0);
+        Mas_Width(35);
     }];
     
     [self.TotalTime mas_makeConstraints:^(MASConstraintMaker *make) {
-        Mas_Right(self.fillScreenButton.mas_left, 15);
+        Mas_Right(self.fillScreenButton.mas_left, 5);
         make.centerY.mas_equalTo(self.fillScreenButton);
     }];
     
@@ -129,7 +130,7 @@
         Mas_left(self.progressView.mas_left,0);
         Mas_Right(self.TotalTime.mas_left, 4);
         make.centerY.mas_equalTo(self.BottomView);
-        make.height.mas_equalTo(4);
+        make.height.mas_equalTo(10);
     }];
     
     [self.ReplayButton mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -148,6 +149,11 @@
         make.right.mas_equalTo(self).offset(-30);
         make.width.height.mas_equalTo(50);
     }];
+    
+    [self.FastTimelabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.center.mas_equalTo(self);
+    }];
+    
 }
 
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
@@ -294,7 +300,6 @@
     }
 }
 
-
 /**
  sldier修改值
 
@@ -330,9 +335,12 @@
         _Slider.value = 0.0;
         
         _Slider.backgroundColor = [UIColor clearColor];
-        UIImage *image = [self OriginImage:[UIImage imageNamed:@"圆点"] scaleToSize:CGSizeMake(35, 35)];
+        UIImage *image = [UIImage imageNamed:@"圆点"];
+        image = [image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
         [_Slider setThumbImage:image forState:UIControlStateNormal];
         [_Slider addTarget:self action:@selector(SliderValueChange:) forControlEvents:UIControlEventTouchDragInside];
+        _Slider.maximumTrackTintColor = [UIColor greenColor];
+        _Slider.minimumTrackTintColor = UIColor.magentaColor;
         _Slider.continuous = NO;
     }
     return _Slider;
@@ -345,7 +353,7 @@
         _progressView.progress = 0.0;
         _progressView.progressTintColor = setTextColor(@"f4f4f4");
         _progressView.trackTintColor    = setTextColor(@"b3b3b3");
-        CGAffineTransform transform = CGAffineTransformMakeScale(1.0f, 1.0f);
+        CGAffineTransform transform = CGAffineTransformMakeScale(1.0f, 0);
         _progressView.transform = transform;
         _progressView.backgroundColor = [UIColor redColor];
     }
@@ -467,6 +475,16 @@
         _RightTimeImage.hidden = YES;
     }
     return _RightTimeImage;
+}
+
+-(UILabel *)FastTimelabel
+{
+    if (!_FastTimelabel) {
+        _FastTimelabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 0, 0)];
+        _FastTimelabel.textColor = UIColor.darkGrayColor;
+        _FastTimelabel.font = [UIFont systemFontOfSize:16];
+    }
+    return _FastTimelabel;
 }
 
 

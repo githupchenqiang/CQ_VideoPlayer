@@ -280,6 +280,9 @@ typedef enum  {
     if (self.sumTime < 0) { self.sumTime = 0; }
     self.isDragged = YES;
     [self seekToTime:self.sumTime completionHandler:nil];
+    _statuesView.FastTimelabel.hidden = NO;
+    _statuesView.FastTimelabel.text = [NSString stringWithFormat:@"%@ / %@",_statuesView.CurrentTime.text,_statuesView.TotalTime.text];
+    
 }
 
 
@@ -535,6 +538,7 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
             [_Player play];
             button.hidden = YES;
             _activity.hidden = NO;
+            _statuebutton.selected = YES;
             [_activity startAnimating];
             _statuesView.backgroundColor = [UIColor clearColor];
             break;
@@ -637,6 +641,7 @@ CGFloat totalDuration = CMTimeGetSeconds(duration11);
                     _statuebutton.selected = YES;
                     _statuesView.LeftTimeImage.hidden = YES;
                     _statuesView.RightTimeImage.hidden = YES;
+                    _statuesView.FastTimelabel.hidden = YES;
                     break;
                 }
                 case PanDirectionVerticalMoved:{

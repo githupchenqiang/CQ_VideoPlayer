@@ -87,9 +87,9 @@
 /** 向右滑动指示图片*/
 @property (nonatomic ,strong)UIImageView                *RightTimeImage;
 
-@property (nonatomic ,strong)UILabel                    *RightFastTimelabel;
+//左右滑动的时间指示
+@property (nonatomic ,strong)UILabel                    *FastTimelabel;
 
-@property (nonatomic ,strong)UILabel                    *LeftFastTimelabel;
 
 
 
